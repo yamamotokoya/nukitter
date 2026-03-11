@@ -1,0 +1,60 @@
+<div id="<%= dom_id(streamer) %>" class="bg-white overflow-hidden shadow rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200 flex flex-col">
+  <div class="p-6 flex-1">
+    <div class="flex items-center space-x-4">
+      <%# さっきのHelperを使い回す %>
+      <div class="h-12 w-12 rounded-full flex items-center justify-center font-bold text-xl <%= streamer_avatar_class(streamer.name) %>">
+        <%= streamer.name&.[](0) %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-900 truncate">
+          <%= link_to streamer.name, streamer, class: "hover:text-indigo-600" %>
+        </p>
+        <p class="text-sm text-gray-500 truncate">@<%= streamer.x_url %></p>
+      </div>
+    </div>
+    
+    <div class="mt-4">
+      <p class="text-xs text-gray-400">最新の投稿</p>
+      <div class="mt-1 text-sm text-gray-600 line-clamp-2">
+      <% if streamer.posts&.any? %>
+    <%# URLをリンク化し、さらにTailwindのクラスを付与する %>
+    <%= auto_link(streamer.posts.last.content, html: { class: 'text-indigo-600 hover:underline' }) %>
+    <div class="mt-2 text-xs text-gray-400 italic">
+      <% if streamer.posts.last.created_at > 1.hour.ago %>
+        <span class="relative flex h-2 w-2 mr-2">
+          <%# 外側の波紋アニメーション %>
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+          <%# 内側の静止したドット %>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+        </span>
+        <span class="text-red-500 font-semibold not-italic mr-1">NEW!</span>
+      <% end %>
+      <%= time_ago_in_words(streamer.posts.last.created_at) %>前
+    </div>
+  <% else %>
+    <span class="italic text-gray-300 text-xs">投稿なし</span>
+  <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex items-center justify-between">
+    <%# dom_id(streamer) を使うと "streamer_1" のような一意のIDが付きます %>
+    <div class="bg-white overflow-hidden shadow ...">
+      <%# ... 既存のコード ... %>
+      <%= button_to streamer, method: :delete, 
+            form: { data: { turbo: true,
+              turbo_confirm: "本当に消しますか？" } },
+            class: "text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1 rounded transition-colors" do %>
+        配信者を削除
+      <% end %>
+    </div>
+
+
+  <% # 右寄せ：投稿数 %>
+  <div class="text-xs text-gray-500 italic">
+    投稿数: <%= streamer.posts.count %>
+  </div>
+</div>
+
+</div>

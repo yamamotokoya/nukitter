@@ -1,0 +1,11 @@
+<div id="flash-notifications" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none">
+  <% flash.each do |type, message| %>
+    <div id="<%= "flash_#{Time.now.to_i}" %>" 
+         data-controller="removable"
+         class="pointer-events-auto min-w-[300px] flex items-center p-4 rounded-lg shadow-lg border-l-4 
+                <%= type == 'notice' ? 'bg-green-50 border-green-500 text-green-800' : 'bg-red-50 border-red-500 text-red-800' %>">
+      <div class="flex-1 font-medium"><%= message %></div>
+      <button data-action="click->removable#remove" class="ml-4 text-gray-400 hover:text-gray-600">✕</button>
+    </div>
+  <% end %>
+</div>

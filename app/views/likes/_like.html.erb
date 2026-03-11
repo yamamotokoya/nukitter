@@ -1,0 +1,22 @@
+<%# app/views/likes/_like.html.erb %>
+<div id="like_button_<%= post.id %>">
+  <% if logged_in? %>
+    <% if post.liked_by?(current_user) %>
+      <%= button_to post_likes_path(post), method: :delete, class: "flex items-center text-pink-600 font-bold text-xs group" do %>
+        <svg class="w-5 h-5 fill-current mr-1" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span><%= post.likes.count %></span>
+      <% end %>
+    <% else %>
+      <%= button_to post_likes_path(post), method: :post, class: "flex items-center text-gray-400 hover:text-pink-500 font-bold text-xs group transition" do %>
+        <svg class="w-5 h-5 stroke-current fill-none mr-1" viewBox="0 0 24 24" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span><%= post.likes.count %></span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%# 未ログイン時はログイン画面へ %>
+    <%= link_to login_path, class: "flex items-center text-gray-400 text-xs" do %>
+      <svg class="w-5 h-5 stroke-current fill-none mr-1" viewBox="0 0 24 24" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span><%= post.likes.count %></span>
+    <% end %>
+  <% end %>
+</div>

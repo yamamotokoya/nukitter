@@ -1,0 +1,26 @@
+<header class="bg-slate-900 text-white shadow-md">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="flex items-center space-x-6">
+      <%= link_to "My App", root_path, class: "text-xl font-bold" %>
+      
+      <%# 管理者専用メニュー %>
+      <% if current_user&.admin? %>
+        <nav class="flex items-center space-x-4 ml-6 border-l border-slate-700 pl-6">
+          <span class="bg-amber-500 text-slate-900 text-xs font-bold px-2 py-1 rounded uppercase">Admin</span>
+          <%= link_to "配信者登録", new_streamer_path, class: "text-sm hover:text-amber-400 transition" %>
+          <%= link_to "ユーザー管理", users_path, class: "text-sm hover:text-amber-400 transition" %>
+        </nav>
+      <% end %>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <% if logged_in? %>
+        <span class="text-sm text-slate-300"><%= current_user.name %> さん</span>
+        <%= button_to "ログアウト", logout_path, method: :delete, class: "text-sm bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded" %>
+      <% else %>
+        <%= link_to "ログイン", login_path, class: "text-sm hover:underline" %>
+        <%= link_to "新規登録", signup_path, class: "text-sm bg-indigo-600 px-3 py-2 rounded" %>
+      <% end %>
+    </div>
+  </div>
+</header>

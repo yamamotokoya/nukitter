@@ -1,0 +1,1113 @@
+<div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"> 
+  <div class="p-5">
+    <%# 配信者情報（ヘッダー） %>
+    <div class="flex items-center mb-4">
+      <%= link_to streamer_path(post.streamer), class: "flex items-center group" do %>
+        <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-lg mr-3 <%= streamer_avatar_class(post.streamer.name) %>">
+          <%= post.streamer.name&.[](0) %>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center">
+          <p class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition">
+            <%= post.streamer.name %>
+          </p>
+          <% if post.streamer.x_url.present? %>
+        <span class="hidden sm:inline mx-2 text-gray-300">|</span>
+        <%= link_to post.streamer.x_url, target: "_blank", rel: "noopener", class: "text-xs text-gray-400 hover:text-sky-500 flex items-center transition" do %>
+          <%# X風のアイコン（文字でも代用可） %>
+          <span class="font-medium">@<%= post.streamer.x_url.split('/').last %></span>
+          <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <% end %>
+      <% end %>
+          
+          <p class="text-xs text-gray-400 post_created_at">
+            <%= time_ago_in_words(post.created_at) %>前
+          </p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# 投稿本文 %>
+    <div class="flex flex-col h-full">
+      <div class="text-gray-600 text-sm mb-4 break-words overflow-hidden flex-1 min-h-[4.5rem]"
+          style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;">
+        <%= auto_link(post.content, html: { class: 'text-indigo-600 hover:underline' }) %>
+      </div>
+
+      <%# ジャンルバッジ：最下部に固定 %>
+      <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-gray-100">
+        <% if post.genres.any? %>
+          <% post.genres.each do |genre| %>
+            <%= link_to genre_path(genre), class: "inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm whitespace-nowrap" do %>
+              <span class="mr-0.5 text-indigo-400">#</span><%= genre.name %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <span class="text-[10px] text-gray-400 italic px-1">ジャンル未設定</span>
+        <% end %>
+      </div>
+    </div>
+
+
+    <%# 動画がある場合 %>
+    <% if post.video.attached? %>
+      <div class="rounded-xl overflow-hidden bg-black aspect-video">
+        <%= video_tag url_for(post.video), controls: true, class: "w-full h-full" %>
+      </div>
+    <% end %>
+  </div>
+</div>   
+
+
+      <%# --- 3. サイドメニュー本体 (headerの外に出す) --- %>
+      <div data-menu-target="content" 
+           class="fixed inset-y-0 left-0 w-72 bg-slate-900 text-white shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-8">
+            <span class="text-xl font-bold">Menu</span>
+            <button data-action="click->menu#toggle" class="text-slate-400 hover:text-white text-2xl">✕</button>
+          </div>
+
+          <%# サイドメニュー内検索窓 (スマホ用) %>
+          <div class="mb-6 relative group">
+            <% search_url = current_user&.admin? ? streamers_path : root_path %>
+            <%= form_with url: search_url, method: :get, local: true, class: "relative", style: "display: block;" do |f| %>
+              <%= f.text_field :query, value: params[:query], placeholder: "キーワード検索...", class: "w-full bg-slate-900 text-sm text-slate-200 pl-4 pr-12 py-3 rounded-xl border border-slate-700 outline-none" %>
+              <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-indigo-600 text-white rounded-lg active:scale-90 transition-all">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </button>
+            <% end %>
+          </div>
+
+          <nav class="flex flex-col space-y-4">
+            <%= link_to "タイムライン", root_path, class: "text-base py-2 hover:text-indigo-400 border-b border-slate-800" %>
+            
+            <%# ジャンル一覧 %>
+            <div class="pt-4">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">ジャンル</p>
+              <div class="flex flex-wrap gap-2">
+                <% @sidebar_genres.each do |genre| %>
+                  <%= link_to genre_path(genre), class: "text-xs bg-slate-800 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-full transition-colors border border-slate-700" do %>
+                    <span class="text-slate-500 mr-0.5">#</span><%= genre.name %>
+                    <span class="ml-1 text-[10px] text-slate-400 font-medium"><%= genre.posts_count %></span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            
+            <%# 管理者メニュー %>
+            <% if current_user&.admin? %>
+              <div class="pt-4 border-t border-slate-800">
+                <span class="bg-amber-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Admin Menu</span>
+                <div class="flex flex-col space-y-2 mt-3 pl-2 border-l-2 border-amber-500/30 text-sm">
+                  <%= link_to "配信者登録", new_streamer_path, class: "hover:text-amber-400" %>
+                  <%= link_to "配信者一覧", streamers_path, class: "hover:text-amber-400" %>
+                  <div class="pt-2">
+                    <p class="text-xs text-slate-500 font-bold mb-1 underline">ユーザー管理</p>
+                    <%= link_to "・ ユーザー一覧", users_path, class: "block hover:text-amber-400" %>
+                    <%= link_to "・ 自分の編集", edit_user_path(current_user), class: "block hover:text-amber-400" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <%# ログイン/ログアウト %>
+            <div class="pt-6 border-t border-slate-800">
+              <% if logged_in? %>
+                <div class="text-xs text-slate-400 mb-2 px-2">Login: <%= current_user.name %></div>
+                <%= button_to "ログアウト", logout_path, method: :delete, class: "w-full text-left text-sm bg-slate-800 hover:bg-red-900/50 px-4 py-2 rounded" %>
+              <% else %>
+                <%= link_to "ログイン", login_path, class: "block text-sm text-center bg-slate-800 py-2 rounded" %>
+                <%= link_to "新規登録", signup_path, class: "block text-sm text-center bg-indigo-600 py-2 rounded mt-2" %>
+              <% end %>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+  <%# --- 2. 最近見た動画 (ヘッダーの「外」に配置する) --- %>
+  <% if @history_posts&.any? %>
+    <%= turbo_frame_tag "view_history_frame" do %>
+    <div id="view_history_section" class="mb-12 transition-all duration-500 ease-in-out">
+      <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center px-1">
+        <span class="mr-2 text-lg">🕒</span> 最近見た動画10件
+      </h2>
+      <%# --- 履歴削除ボタン --- %>
+      <%= button_to history_path, method: :delete, 
+            data: { confirm: "視聴履歴をすべて削除しますか？" },
+            class: "text-[10px] font-bold text-gray-400 hover:text-red-500 transition-all bg-gray-100 hover:bg-red-50 px-3 py-1.5 rounded-full"  do %>
+            <%# class: "text-[10px] font-bold text-gray-400 hover:text-red-500 transition-colors flex items-center bg-gray-100 hover:bg-red-50 px-3 py-1.5 rounded-full mb-2" do %> 
+        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        履歴を消去
+      <% end %>
+      
+      <div class="flex flex-nowrap overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x">
+        <% @history_posts.each do |post| %>
+          <div class="flex-none snap-start group" style="width: 240px;">
+            <%= link_to post_path(post), class: "block w-full" do %>
+              <div class="bg-black rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition relative" 
+                   style="width: 240px; height: 135px;">
+                <% if post.video.attached? %>
+                  <%= video_tag rails_storage_proxy_path(post.video), 
+                                style: "width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.9;",
+                                class: "group-hover:opacity-100 transition-opacity" %>
+                <% end %>
+                <div class="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div class="p-2 bg-white/20 backdrop-blur-sm rounded-full">
+                    <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </div>
+                </div>
+              </div>
+              <div style="width: 240px;" class="px-1 text-left">
+                <p class="text-[11px] font-bold text-gray-900 truncate mb-0.5"><%= post.streamer.name %></p>
+                <p class="text-[10px] text-gray-500 truncate opacity-80"><%= post.content %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
+  <% end %>
+
+  <%# _post.html.erb %>
+  <div id="<%= dom_id post %>" class="group relative bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-full min-h-[400px]">
+  
+  <%# 1. カード全体をクリック可能にする透明な詳細リンク（最背面 z-10） %>
+  <%= link_to post_path(post), class: "absolute inset-0 z-10" do %>
+    <span class="sr-only">詳細を見る</span>
+  <% end %>
+
+  <%# 2. 動画エリア（再生ボタンを触れるように z-30） %>
+  <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative">
+    <% if post.video.attached? %>
+      <%= video_tag url_for(post.video), controls: true, preload: "metadata", class: "w-full h-full object-contain" %>
+    <% end %>
+  </div>
+
+  <div class="p-5 flex-1 flex flex-col relative">
+    <%# 3. 配信者情報セクション（リンクを効かせるため z-30） %>
+    <div class="flex items-center mb-4 relative z-30">
+      <%# アイコン：配信者一覧へ %>
+      <%= link_to streamer_path(post.streamer), class: "w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mr-3 hover:bg-indigo-500 transition shadow-sm" do %>
+        <%= post.streamer.name&.[](0) %>
+      <% end %>
+      
+      <div class="flex flex-col justify-center min-w-0">
+        <div class="flex items-baseline space-x-2">
+          <span class="text-sm font-extrabold text-gray-900 leading-tight truncate">
+            <%= post.streamer.name %>
+          </span>
+          <%# Xリンク：ここを z-40 にして確実にクリック可能にする %>
+          <% if post.streamer.x_url.present? %>
+            <%= link_to post.streamer.x_url, target: "_blank", rel: "noopener", class: "text-[11px] text-indigo-400 hover:text-indigo-600 hover:underline font-bold truncate transition-colors relative z-40" do %>
+              @<%= post.streamer.x_url %>
+            <% end %>
+          <% end %>
+        </div>
+        <span class="text-[10px] text-gray-400 font-medium tracking-wider mt-0.5">
+          <%= time_ago_in_words(post.created_at) %>前
+        </span>
+      </div>
+    </div>
+
+    <%# 4. 本文エリア（クリック判定は背面の z-10 に任せるので z-20 ＆ pointer-events-none） %>
+    <div class="text-gray-600 text-sm leading-relaxed mb-4 overflow-hidden flex-1 relative z-20 pointer-events-none" 
+         style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; min-height: 4.2em; max-height: 4.2em;">
+      <%= post.content %>
+    </div>
+
+    <div class="flex items-center space-x-4 mb-4 text-[11px] text-gray-400 font-medium">
+
+    <div class="absolute bottom-4 right-4 z-50">
+      <%= render "likes/like", post: post %>
+    </div>
+    </div>
+
+
+    <%# 5. ジャンルバッジ（クリックを優先するため z-30） %>
+    <div class="mt-auto pt-4 border-t border-gray-100 flex flex-wrap gap-2 relative z-30">
+      <% post.genres.each do |genre| %>
+        <%= link_to genre_path(genre), class: "px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 transition" do %>
+          #<%= genre.name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# show.html.erb genres %>
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <%# ヘッダー部分をカード風に装飾 %>
+  <div class="mb-10 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+        <span class="text-white font-bold text-xl">#</span>
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">
+          <%= @genre.name %>
+        </h1>
+        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の投稿一覧</p>
+      </div>
+    </div>
+
+    <%# 投稿数バッジ %>
+    <div class="text-right">
+      <span class="block text-2xl font-black text-indigo-600 leading-none">
+        <%= @posts_count %>
+      </span>
+      <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 block">Videos</span>
+    </div>
+  </div>
+
+  <%# 投稿一覧（既存のグリッド） %>
+  <div class="grid gap-6 md:grid-cols-2">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <%# 投稿がない時の表示（以前のコード） %>
+      <div class="col-span-2 py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+        <p class="text-gray-500">このジャンルの投稿はまだありません。</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<html>
+  <head>
+    <title><%= content_for(:title) || "Product One Sample" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Product One Sample">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50">
+    <div data-controller="menu">
+      <%# --- 1. 上部バー (mainの外に置くことで端まで広がる) --- %>
+      <header class="bg-slate-900 text-white shadow-md fixed top-0 w-full z-40 h-16 flex items-center px-4 justify-between">
+        <div class="flex items-center">
+          <button data-action="click->menu#toggle" class="p-2 hover:bg-slate-800 rounded-md focus:outline-none transition-colors">
+            <svg class="h-6 w-6 fill-none stroke-current" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+          <%= link_to "My App", root_path, class: "ml-4 text-xl font-bold tracking-tight shrink-0" %>
+        </div>
+
+        <%# --- 2. PC用の中央検索窓 --- %>
+        <div class="hidden md:block w-full max-w-md mx-4">
+          <% search_url = current_user&.admin? ? streamers_path : root_path %>
+          <%= form_with url: search_url, method: :get, local: true, class: "relative w-full", style: "display: block;" do |f| %>
+            <%= f.text_field :query, 
+                  value: params[:query], 
+                  placeholder: "キーワード検索...", 
+                  class: "w-full bg-slate-800 text-sm text-slate-200 pl-4 pr-10 py-2 rounded-lg border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all placeholder-slate-500" %>
+            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white transition-colors">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+          <% end %>
+        </div>
+
+        <div class="w-10 md:w-40"></div> <%# バランス調整用の空要素 %>
+      </header>
+
+      <%# --- サイドメニュー本体 --- %>
+<div data-menu-target="content" 
+     class="fixed inset-y-0 left-0 w-72 bg-slate-900 text-white shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto">
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-8">
+      <span class="text-xl font-bold tracking-tight text-indigo-400">Menu</span>
+      <button data-action="click->menu#toggle" class="text-slate-400 hover:text-white text-2xl transition-colors">✕</button>
+    </div>
+
+    <%# 1. 検索窓 %>
+    <div class="mb-8 relative">
+      <% search_url = current_user&.admin? ? streamers_path : root_path %>
+      <%= form_with url: search_url, method: :get, local: true, class: "relative w-full", style: "display: block;" do |f| %>
+        <%= f.text_field :query, value: params[:query], placeholder: "キーワード検索...", class: "w-full bg-slate-950 text-sm text-slate-200 pl-4 pr-12 py-3 rounded-xl border border-slate-700 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-600" %>
+        <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-indigo-600 text-white rounded-lg active:scale-95 transition-all shadow-lg shadow-indigo-900/20">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </button>
+      <% end %>
+    </div>
+
+    <nav class="flex flex-col space-y-6">
+      <%= link_to "タイムライン", root_path, class: "text-base py-2 hover:text-indigo-400 border-b border-slate-800 transition font-bold" %>
+
+      <%# --- 2. 最近いいねした動画 (Likeセクション) --- %>
+      <%# --- 2. お気に入り、または履歴セクション --- %>
+<% if logged_in? %>
+  <% if @sidebar_likes&.any? %>
+    <%# --- お気に入りがある場合 --- %>
+    <div class="pt-2">
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
+        <span class="text-red-500 mr-1.5">❤️</span> お気に入り一覧
+      </p>
+      <div class="space-y-3">
+        <% @sidebar_likes.each do |post| %>
+          <%= link_to post_path(post), class: "group block p-2 rounded-lg hover:bg-slate-800 transition-all border border-transparent hover:border-slate-700" do %>
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-inner">
+                <%= post.streamer.name&.[](0) %>
+              </div>
+              <div class="ml-3 overflow-hidden">
+                <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= post.streamer.name %></p>
+                <p class="text-[10px] text-slate-500 truncate mt-0.5 group-hover:text-slate-400"><%= post.content %></p>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+        <%= link_to user_path(current_user), class: "block text-center py-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 transition" do %>
+          すべて見る →
+        <% end %>
+      </div>
+    </div>
+
+  <% elsif @sidebar_histories&.any? %>
+    <%# --- お気に入りがなく、履歴がある場合 --- %>
+      <div class="pt-2">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
+          <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た動画
+        </p>
+        <div class="space-y-3">
+          <% @sidebar_histories.each do |post| %>
+            <%= link_to post_path(post), class: "group block p-2 rounded-lg hover:bg-slate-800 transition-all border border-transparent hover:border-slate-700" do %>
+              <div class="flex items-center">
+                <div class="w-8 h-8 rounded bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-inner">
+                  <%= post.streamer.name&.[](0) %>
+                </div>
+                <div class="ml-3 overflow-hidden">
+                  <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= post.streamer.name %></p>
+                  <p class="text-[10px] text-slate-500 truncate mt-0.5 group-hover:text-slate-400"><%= post.content %></p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+          <%= link_to user_path(current_user), class: "block text-center py-2 text-[10px] font-bold text-indigo-400 hover:text-indigo-300 transition" do %>
+            履歴をすべて見る →
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+
+      <%# --- 3. ジャンル一覧 --- %>
+      <div class="pt-2">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">ジャンル</p>
+        <div class="flex flex-wrap gap-2">
+          <% @sidebar_genres.each do |genre| %>
+            <%= link_to genre_path(genre), class: "text-[10px] bg-slate-800 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-full transition-all border border-slate-700 flex items-center" do %>
+              <span class="text-slate-500 mr-0.5 group-hover:text-indigo-200">#</span><%= genre.name %>
+              <span class="ml-1 opacity-40 font-medium"><%= genre.posts_count %></span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# --- 4. 配信者ランキングセクション (旧おすすめセクション) --- %>
+      <% if @sidebar_ranked_streamers&.any? %>
+              <div class="pt-6 border-t border-slate-800">
+                <div class="flex items-center justify-between mb-4 px-1">
+                  <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center shrink-0">
+                    <span class="text-amber-400 mr-1.5">⭐</span> Ranking
+                  </p>
+                  <div class="flex items-center space-x-1 shrink-0">
+                    <%= link_to "投稿", url_for(rank: "posts"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'posts' || params[:rank].blank? ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
+                    <%= link_to "人気", url_for(rank: "likes"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'likes' ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
+                    <%= link_to "再生", url_for(rank: "views"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'views' ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <% @sidebar_ranked_streamers.each do |streamer| %>
+                    <%= link_to streamer_path(streamer), class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                      <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-300 group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors">
+                        <%= streamer.name&.[](0) %>
+                      </div>
+                      <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
+                        <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= streamer.name %></p>
+                        <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap">
+                          <% case params[:rank] %>
+                          <% when "likes" %> <%= number_to_human(streamer.total_likes) %> likes
+                          <% when "views" %> <%= number_to_human(streamer.total_views) %> views
+                          <% else %> <%= streamer.posts_count %> videos
+                          <% end %>
+                        </p>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+
+
+
+    <div class="space-y-2">
+      <% @sidebar_ranked_streamers.each do |streamer| %>
+        <%= link_to streamer_path(streamer), class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+          <%# アイコン %>
+          <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-300 group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors shadow-sm">
+            <%= streamer.name&.[](0) %>
+          </div>
+          
+          <div class="ml-3 overflow-hidden text-left">
+            <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white transition-colors">
+              <%= streamer.name %>
+            </p>
+            <%# ランキングの種類によって表示するテキストを変える %>
+            <p class="text-[9px] text-slate-500 font-medium mt-0.5">
+              <% case params[:rank] %>
+              <% when "likes" %>
+                <%= number_to_human(streamer.total_likes) %> likes
+              <% when "views" %>
+                <%= number_to_human(streamer.total_views) %> views
+              <% else %>
+                <%= streamer.posts_count %> videos
+              <% end %>
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+      <%# --- 5. 管理者メニュー (完全復活) --- %>
+      <% if current_user&.admin? %>
+        <div class="pt-6 border-t border-slate-800">
+          <span class="bg-amber-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">Admin Menu</span>
+          <div class="flex flex-col space-y-2 mt-4 pl-3 border-l-2 border-amber-500/30">
+            <%= link_to "配信者登録", new_streamer_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
+            <%= link_to "配信者一覧", streamers_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
+            <div class="pt-3">
+              <p class="text-[10px] text-slate-500 font-bold mb-2 uppercase tracking-widest">System Management</p>
+              <%= link_to "・ ユーザー一覧", users_path, class: "block text-sm py-1 pl-1 hover:text-amber-400 transition" %>
+              <%= link_to "・ プロフィール編集", edit_user_path(current_user), class: "block text-sm py-1 pl-1 hover:text-amber-400 transition" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <%# 6. ログイン・アウト --- %>
+      <div class="pt-6 border-t border-slate-800">
+        <% if logged_in? %>
+          <div class="text-[10px] text-slate-500 mb-4 px-2 italic">ログイン : <%= current_user.name %></div>
+          <%= button_to "ログアウト", logout_path, method: :delete, class: "w-full text-left text-xs bg-slate-800 hover:bg-red-900/40 px-4 py-2.5 rounded-lg transition border border-slate-700" %>
+        <% else %>
+          <%= link_to "ログイン", login_path, class: "block text-sm text-center bg-slate-800 py-2.5 rounded-lg hover:bg-slate-700 transition" %>
+          <%= link_to "新規登録", signup_path, class: "block text-sm text-center bg-indigo-600 py-2.5 rounded-lg mt-2 hover:bg-indigo-500 transition shadow-lg shadow-indigo-900/20" %>
+        <% end %>
+      </div>
+    </nav>
+  </div>
+</div>
+
+
+      <%# 背景オーバーレイ %>
+      <div data-menu-target="overlay" data-action="click->menu#toggle" 
+           class="fixed inset-0 bg-black/60 hidden z-40 backdrop-blur-sm"></div>
+    </div>
+
+    <%# --- 4. メインコンテンツ (ここで中央寄せと最大幅を制御) --- %>
+    <main class="w-full pt-24 pb-12">
+      <div class="max-w-6xl mx-auto px-4">
+        <%= yield %>
+        <%= render "shared/flash" %>
+      </div>
+    </main>
+  </body>
+</html>
+
+<%# _post.html.erb %>
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <% if @search_word.present? %>
+    <%# 検索実行時のヘッダー %>
+    <div class="mb-8 p-6 bg-indigo-50 rounded-2xl border border-indigo-100 shadow-sm flex justify-between items-center transition-all">
+      <div class="flex items-center">
+        <span class="text-2xl mr-3">🔍</span>
+        <p class="text-indigo-900 font-medium">
+          「<strong class="text-indigo-700 text-lg"><%= @search_word %></strong>」の検索結果: 
+          <span class="ml-1 font-bold text-xl"><%= @posts.count %></span> 件
+        </p>
+      </div>
+      <%= render 'sort_menu' %>
+      <%= link_to "クリア", posts_path, class: "h-9 px-4 bg-white text-indigo-600 border border-indigo-200 rounded-lg flex items-center text-sm font-bold hover:bg-indigo-600 hover:text-white transition shadow-sm" %>
+    </div>
+  <% else %>
+    <%# 通常時のヘッダー %>
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-8 flex items-center tracking-tight">
+      <span class="mr-3">🚀</span> 最新のタイムライン
+    </h1>
+    <%= render 'sort_menu' %>
+  <% end %>
+
+  <%# 投稿一覧のグリッド表示 %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <%# 投稿がない、または検索にヒットしない時の表示 %>
+      <div class="col-span-2 py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+        <div class="text-4xl mb-4">🏜️</div>
+        <p class="text-gray-500 font-bold text-lg">一致する投稿が見つかりませんでした</p>
+        <p class="text-gray-400 text-sm mt-1">別のキーワードを試してみてください。</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%# application.html.erb %>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Product One Sample" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-gray-50 pt-16">
+    <div data-controller="menu">
+      <%# 1. ページ全体のキャッシュを強制クリア %>
+      <% content_for :head do %>
+        <meta name="turbo-cache-control" content="no-cache">
+      <% end %>
+      <%# 1. flex-wrap を追加して、スマホでは検索窓が「2行目」に落ちるようにします %>
+      <div class="w-full px-6 pt-12 pb-8 flex flex-wrap items-center justify-between bg-white border-b border-gray-50">
+        <div style="width: 100%; padding: 40px 24px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; background-color: transparent;">
+  
+  <%# --- 左：ボタンとロゴ (240px固定) --- %>
+  <div style="display: flex; align-items: center; width: 240px; flex-shrink: 0; margin-bottom: 16px;">
+    <button data-action="click->menu#toggle" 
+            class="group relative w-12 h-12 flex items-center justify-center bg-white text-slate-700 hover:text-indigo-600 rounded-2xl border border-slate-100 shadow-sm transition-all active:scale-95 shrink-0 overflow-hidden">
+      <svg class="h-6 w-6 fill-none stroke-current" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16m-7 6h7"></path>
+      </svg>
+    </button>
+    <span class="text-2xl font-black text-slate-900 tracking-tighter" style="margin-left: 24px; white-space: nowrap;">
+      <%= link_to "NuKitter", root_path, data: { turbo_frame: "_top" }  %>
+    </span>
+  </div>
+
+  <%# --- 中央：検索窓 (PCでは380pxに強制固定。絶対に広がりません) --- %>
+  <div class="search-container" style="flex-grow: 1; display: flex; justify-content: center; min-width: 300px; order: 3;">
+    <div style="width: 380px; max-width: 100%; position: relative;">
+      <% search_url = current_user&.admin? ? streamers_path : root_path %>
+      <%= form_with url: search_url, method: :get, local: true, data: { turbo_frame: "_top" } do |f| %>
+        <div style="position: relative; width: 100%; display: flex; align-items: center;">
+          <%= f.text_field :query, 
+                value: params[:query], 
+                placeholder: "検索する...", 
+                style: "width: 100%; padding: 12px 55px 12px 20px; border-radius: 18px; border: 1px solid #e2e8f0; background-color: white; font-size: 14px; font-weight: bold; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" %>
+          <button type="submit" style="position: absolute; right: 6px; width: 38px; height: 38px; background-color: #4f46e5; color: white; border: none; border-radius: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 50;">
+            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# --- 右：左側と同じ240pxの隙間。これで検索窓が真ん中に固定されます --- %>
+  <div class="hidden-mobile" style="width: 240px; flex-shrink: 0;"></div>
+</div>
+
+<style>
+  @media (max-width: 768px) {
+    .hidden-mobile { display: none !important; }
+    .search-container { order: 2 !important; width: 100% !important; margin-top: 10px; }
+  }
+</style>
+
+      </div>
+
+      <%# --- 2. サイドメニュー本体 --- %>
+      <div id="side_menu_main" data-turbo-permanent data-menu-target="content" class="fixed inset-y-0 left-0 w-72 bg-slate-900 text-white shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-50 overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-8">
+        <span class="text-xl font-bold tracking-tight text-indigo-400">Menu</span>
+        <button data-action="click->menu#toggle" class="text-slate-400 hover:text-white text-2xl">✕</button>
+      </div>
+      
+      <nav class="flex flex-col space-y-6">
+        <%# 1. タイムライン %>
+        <%= link_to root_path, data: { turbo_frame: "_top" }, class: "group flex items-center py-2 px-1 text-sm font-bold text-slate-300 hover:text-indigo-400 border-b border-slate-800 transition-all" do %>
+          <span class="w-6 h-6 flex items-center justify-center bg-slate-800 rounded mr-3 group-hover:bg-indigo-600 transition-colors text-xs">🏠</span>
+          タイムライン
+        <% end %>
+
+        <%# 2. お気に入り or 履歴 %>
+        <% if logged_in? %>
+          <% if @sidebar_likes&.any? %>
+            <div class="pt-2">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
+                <span class="text-red-500 mr-1.5">❤️</span> お気に入り
+              </p>
+              <div class="space-y-2">
+                <% @sidebar_likes.each do |post| %>
+                  <%= link_to post_path(post), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                    <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white">
+                      <% if post.streamer.icon.attached? %>
+                        <%= image_tag post.streamer.icon, class: "w-full h-full rounded-full object-cover" %>
+                      <% else %>
+                        <%= post.streamer.name&.[](0) %>
+                      <% end %>
+                    </div>
+                    <div class="ml-3 overflow-hidden"><p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= post.streamer.name %></p></div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% elsif @sidebar_histories&.any? %>
+            <div class="pt-2">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
+                <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た動画
+              </p>
+              <div class="space-y-2">
+                <% @sidebar_histories.each do |post| %>
+                  <%= link_to post_path(post), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                    <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white">
+                      <% if post.streamer.icon.attached? %>
+                        <%= image_tag post.streamer.icon, class: "w-full h-full rounded-full object-cover" %>
+                      <% else %>
+                        <%= post.streamer.name&.[](0) %>
+                      <% end %>
+                    </div>
+                    <div class="ml-3 overflow-hidden"><p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= post.streamer.name %></p></div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
+        <%# 3. ジャンル %>
+        <div class="pt-2">
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
+            <span class="text-indigo-500 mr-1.5">#</span> ジャンル
+          </p>
+          <div class="flex flex-wrap gap-2 px-1">
+            <% @sidebar_genres.each do |genre| %>
+              <%= link_to genre_path(genre), data: { turbo_frame: "_top" }, class: "text-[10px] bg-slate-800 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-md border border-slate-700 transition-all flex items-center font-bold" do %>
+                <span class="opacity-50 mr-1">#</span><%= genre.name %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <%# 4. ランキング %>
+        <% if @sidebar_ranked_streamers&.any? %>
+          <div class="pt-6 border-t border-slate-800">
+            <div class="flex items-center justify-between mb-4 px-1">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center shrink-0">
+                <span class="text-amber-400 mr-1.5">⭐</span> Ranking
+              </p>
+              <div class="flex items-center space-x-1 ml-auto shrink-0">
+                <% ["posts", "likes", "views"].each do |type| %>
+                  <% label = { "posts" => "📝", "likes" => "❤️", "views" => "👁️" }[type] %>
+                  <%= link_to url_for(rank: type), data: { turbo_action: "advance" }, class: "w-5 h-5 flex items-center justify-center rounded text-[10px] transition-all #{params[:rank] == type || (params[:rank].blank? && type == 'posts') ? 'bg-amber-500 shadow-inner' : 'bg-slate-800'}" do %>
+                    <%= label %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <% @sidebar_ranked_streamers.each do |streamer| %>
+                <%= link_to streamer_path(streamer), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                  <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-300 group-hover:bg-amber-500 group-hover:text-slate-900 transition-colors shadow-sm overflow-hidden border border-slate-600">
+                    <% if streamer.icon.attached? %>
+                      <%= image_tag streamer.icon, class: "w-full h-full object-cover" %>
+                    <% else %>
+                      <%= streamer.name&.[](0) %>
+                    <% end %>
+                  </div>
+                  <div class="ml-3 overflow-hidden text-left">
+                    <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= streamer.name %></p>
+                    <p class="text-[9px] text-slate-500 mt-0.5 whitespace-nowrap uppercase">
+                      <% if params[:rank] == "likes" %> <%= number_to_human(streamer.total_likes) rescue 0 %> likes
+                      <% elsif params[:rank] == "views" %> <%= number_to_human(streamer.total_views) rescue 0 %> views
+                      <% else %> <%= streamer.posts_count %> videos
+                      <% end %>
+                    </p>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      
+        <%# 5. 管理・ユーザーセクション %>
+        <div class="pt-6 border-t border-slate-800 pb-10">
+          <% if logged_in? %>
+            <% if current_user&.admin? %>
+              <div class="mb-4 px-1">
+                <span class="bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">Admin Control</span>
+                <div class="flex flex-col space-y-2 mt-3 pl-2 border-l border-amber-500/30">
+                  <%= link_to "配信者登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                  <%= link_to "配信者一覧", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                </div>
+              </div>
+            <% end %>
+            
+            <%# ユーザー情報カード %>
+            <div class="flex items-center px-2 py-3 bg-slate-950 rounded-xl border border-slate-800 mb-4">
+              <div class="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-[10px] font-bold shrink-0 overflow-hidden">
+                <% if current_user.respond_to?(:avatar) && current_user.avatar.attached? %>
+                  <%= image_tag current_user.avatar, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <%= current_user.name&.[](0) %>
+                <% end %>
+              </div>
+              <div class="ml-2 overflow-hidden">
+                <p class="text-[10px] font-bold truncate text-slate-300"><%= current_user.name %></p>
+              </div>
+            </div>
+            
+            <%# ログアウトボタン：turbo: false で確実にリセットさせる %>
+            <%= button_to logout_path, method: :delete, data: { turbo: false }, class: "w-full text-center text-[10px] font-bold bg-slate-800 hover:bg-red-900/40 text-slate-400 hover:text-white py-2 rounded-lg transition border border-slate-700" do %>
+              ログアウト
+            <% end %>
+          <% else %>
+            <%# 未ログイン時 %>
+            <%= link_to login_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-slate-800 py-2.5 rounded-lg hover:bg-slate-700 text-white mb-2" do %>ログイン<% end %>
+            <%= link_to signup_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-indigo-600 py-2.5 rounded-lg hover:bg-indigo-500 text-white shadow-lg" do %>新規登録<% end %>
+          <% end %>
+        </div>
+      </nav>
+    </div>
+</div>
+
+
+      <%# --- メインコンテンツ --- %>
+      <main class="min-h-screen py-8">
+        <% flash.each do |message_type, message| %>
+          <%# 1. IDをユニークにする %>
+          <div id="flash-<%= message_type %>" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full shadow-2xl font-bold text-sm transition-all <%= message_type == 'notice' ? 'bg-indigo-600 text-white' : 'bg-red-600 text-white' %>">
+            <%= message %>
+
+            <%# 2. 表示された瞬間に「3秒後に消す」タイマーをその場で動かす %>
+            <script>
+              setTimeout(() => {
+                const flash = document.getElementById("flash-<%= message_type %>");
+                if (flash) {
+                  flash.style.opacity = '0';
+                  flash.style.transform = 'translate(-50%, -20px)';
+                  setTimeout(() => flash.remove(), 500);
+                }
+              }, 3000);
+            </script>
+          </div>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
+
+<%# _post.html.erb %>
+<div id="<%= dom_id post %>" class="group relative bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-full min-h-[400px]">
+  
+  <%# 1. 詳細リンク (z-10) %>
+  <%= link_to post_path(post), class: "absolute inset-0 z-10" do %>
+    <span class="sr-only">詳細を見る</span>
+  <% end %>
+
+  <%# 2. 動画エリア (z-30) - Xの動画埋め込みに差し替え %>
+  <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative z-30 flex items-center justify-center">
+    <% if post.x_video_url.present? %>
+      <%# 一覧画面では「再生ボタン風」のプレースホルダーを表示（クリックで詳細へ） %>
+      <div class="text-white flex flex-col items-center pointer-events-none">
+        <svg class="w-12 h-12 mb-2 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <span class="text-xs font-bold bg-black/40 px-2 py-1 rounded">Xで動画を見る</span>
+      </div>
+      
+      <%# もし一覧で直接動画を表示したい場合は、上のdivを消して以下を有効化 %>
+      <%# <blockquote class="twitter-tweet" data-conversation="none" data-cards="hidden"> %>
+      <%#   <a href="<%= post.x_video_url %>"></a> %>
+      <%# </blockquote> %>
+    <% else %>
+      <div class="text-gray-500 text-xs">動画がありません</div>
+    <% end %>
+  </div>
+
+  <div class="p-5 flex-1 flex flex-col relative">
+    <%# 3. 配信者情報 (z-30) - 既存コード維持 %>
+    <div class="flex items-center mb-4 relative z-30">
+      <%# ... (ストリーマーのアイコン表示部分はそのまま) ... %>
+      <%= link_to streamer_path(post.streamer), class: "w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mr-3 hover:bg-indigo-500 transition shadow-sm overflow-hidden" do %>
+        <% if post.streamer.icon.attached? %>
+          <%= image_tag post.streamer.icon, class: "w-full h-full object-cover" %>
+        <% else %>
+          <%= post.streamer.name&.[](0) %>
+        <% end %>
+      <% end %>
+      
+      <div class="flex flex-col justify-center min-w-0">
+        <div class="flex items-baseline space-x-2">
+          <span class="text-sm font-extrabold text-gray-900 leading-tight truncate"><%= post.streamer.name %></span>
+          <%# ここで表示している @ はSNSへのリンクなのでそのまま %>
+          <% if post.streamer.x_url.present? %>
+             <span class="text-[11px] text-indigo-400 font-bold truncate">@<%= post.streamer.x_url.split('/').last %></span>
+          <% end %>
+        </div>
+        <span class="text-[10px] text-gray-400 mt-0.5"><%= time_ago_in_words(post.created_at) %>前</span>
+      </div>
+    </div>
+
+    <%# 4. 本文エリア - 既存コード維持 %>
+    <div class="text-gray-600 text-sm leading-relaxed mb-6 overflow-hidden relative z-20 pointer-events-none" 
+         style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; min-height: 4.2em; max-height: 4.2em;">
+      <%= post.content %>
+    </div>
+
+    <%# 5. フッターエリア - 既存コード維持 %>
+    <div class="mt-auto pt-4 border-t border-gray-100 relative z-30">
+      <%# ジャンルバッジ等はそのまま %>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <% post.genres.each do |genre| %>
+          <%= link_to genre_path(genre), class: "px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-100 transition" do %>
+            #<%= genre.name %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="flex items-center justify-between mt-2 w-full relative z-30">
+        <div class="flex items-center whitespace-nowrap text-[11px] text-gray-400 font-bold bg-gray-50 px-2 py-0.5 rounded-md shrink-0">
+          <svg class="w-3 h-3 mr-1.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span class="leading-none"><%= number_to_human(post.views_count) %>回再生</span>
+        </div>
+        <div class="relative z-50">
+          <%= render "likes/like", post: post %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%# ----ここまで----- %>
+
+<%# show.html.erb/posts %>
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <%# 戻るボタン %>
+  <div class="mb-6">
+    <%= link_to :back,  class: "inline-flex items-center text-sm font-bold text-gray-500 hover:text-indigo-600 transition" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      戻る
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <%# 1. 動画を大きく表示 %>
+    <div class="aspect-video bg-black">
+      <% if @post.video.attached? %>
+        <%= video_tag url_for(@post.video), controls: true, class: "w-full h-full" %>
+      <% end %>
+    </div>
+
+    <div class="p-8 md:p-12">
+      <%# 2. 投稿本文（制限なし・改行維持） %>
+      <div class="text-gray-800 text-lg leading-relaxed break-words whitespace-pre-wrap mb-10 font-medium">
+        <%= auto_link(@post.content, html: { class: 'text-indigo-600 hover:underline' }) %>
+      </div>
+
+      <%# 3. ジャンルバッジ %>
+      <div class="pt-8 border-t border-gray-100">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Genres</p>
+        <div class="flex flex-wrap gap-3">
+          <% @post.genres.each do |genre| %>
+            <%= link_to genre_path(genre), class: "px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-bold rounded-full border border-indigo-100 hover:bg-indigo-600 hover:text-white transition shadow-sm" do %>
+              # <%= genre.name %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# app/views/posts/show.html.erb の一番最後に追加 %>
+
+<div class="max-w-4xl mx-auto px-4 mt-16 pb-20">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+      <span class="mr-2">📺</span> <%= @post.streamer.name %> の他の動画
+    </h2>
+    <%= link_to "すべて見る", streamer_path(@post.streamer), class: "text-sm font-bold text-indigo-600 hover:underline" %>
+  </div>
+
+  <% if @other_posts.any? %>
+    <%# 横スクロール可能なコンテナ %>
+    <div class="flex overflow-x-auto pb-6 gap-6 scrollbar-hide snap-x snap-mandatory">
+      <% @other_posts.each do |other_post| %>
+        <div class="min-w-[280px] md:min-w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+          <%= link_to post_path(other_post), class: "block group" do %>
+            <%# サムネイル（動画の1コマ目） %>
+            <div class="aspect-video bg-black relative">
+              <% if other_post.video.attached? %>
+                <%= video_tag url_for(other_post.video), class: "w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" %>
+              <% end %>
+              <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <div class="bg-white/20 backdrop-blur-sm p-3 rounded-full">
+                  <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+            </div>
+            
+            <%# 簡易タイトル（本文の冒頭） %>
+            <div class="p-4">
+              <p class="text-sm font-bold text-gray-800 line-clamp-2 leading-snug">
+                <%= other_post.content %>
+              </p>
+              <p class="text-[10px] text-gray-400 mt-2">
+                <%= other_post.created_at.strftime("%Y/%m/%d") %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-gray-400 text-sm italic">他の投稿はまだありません。</p>
+  <% end %>
+</div>
+
+<style>
+  /* スクロールバーを隠す（Chrome, Safari用） */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  /* スクロールバーを隠す（IE, Edge, Firefox用） */
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+<%# ----ここまで---- %>
+
+<%# show.html.erb/users %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <%# --- 1. ユーザープロフィールヘッダー --- %>
+  <div class="bg-slate-900 rounded-3xl p-8 md:p-12 mb-12 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center md:items-end space-y-6 md:space-y-0 md:space-x-8">
+    <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg ring-4 ring-slate-800">
+      <%= @user.name&.[](0) %>
+    </div>
+    
+    <div class="flex-1 text-center md:text-left">
+      <h1 class="text-3xl font-black text-white mb-2 tracking-tight"><%= @user.name %></h1>
+      <div class="flex items-center justify-center md:justify-start space-x-4 text-slate-400 text-sm">
+        <span class="flex items-center">
+          <span class="text-red-500 mr-1.5 text-lg">❤️</span>
+          <strong class="text-white mr-1"><%= @liked_posts.count %></strong> Likes
+        </span>
+        <span class="w-1 h-1 bg-slate-700 rounded-full"></span>
+        <span>Member since <%= @user.created_at.strftime("%Y/%m") %></span>
+      </div>
+    </div>
+
+    <% if current_user == @user %>
+      <%= link_to edit_user_path(@user), class: "px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold rounded-xl transition-all border border-slate-700 shadow-sm" do %>
+        プロフィールを編集
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# --- 2. 最近見た動画 (10件) --- %>
+  <% if @history_posts.present? && @history_posts.any?  %>
+    <div id="view_history_section" class="mb-16">
+        <div class="flex items-center justify-between mb-6 px-1">
+  <%# 左側：タイトル %>
+  <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center">
+    <span class="mr-2 text-lg">🕒</span> 最近見た動画 10件
+  </h2>
+  
+  <%# 右側：削除リンク（aタグなのでレイアウトが壊れません） %>
+  <%= link_to history_path, 
+        data: { 
+          turbo_method: :delete, 
+          turbo_confirm: "視聴履歴をすべて削除しますか？" 
+          
+        }, 
+        class: "flex items-center space-x-1.5 text-[10px] font-bold text-gray-400 hover:text-red-500 bg-gray-100 hover:bg-red-50 px-3 py-1.5 rounded-full transition-colors no-underline" do %>
+    <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+    <span class="whitespace-nowrap">履歴を消去</span>
+  <% end %>
+</div>
+
+      <div class="flex overflow-x-auto gap-6 pb-6 scrollbar-hide snap-x items-start">
+        <% @history_posts.each do |post| %>
+          <div class="w-60 flex-none snap-start group">
+            <%= link_to post_path(post), class: "block w-full" do %>
+              <div class="aspect-video bg-black rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition relative">
+                <% if post.video.attached? %>
+                  <%= video_tag rails_storage_proxy_path(post.video), class: "w-full h-full object-cover block opacity-90 group-hover:opacity-100" %>
+                <% end %>
+              </div>
+              <div class="px-1 text-left">
+                <p class="text-[11px] font-bold text-gray-900 truncate mb-0.5"><%= post.streamer.name %></p>
+                <p class="text-[10px] text-gray-500 truncate opacity-80"><%= post.content %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# --- 3. お気に入り動画セクション --- %>
+  <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+    <h2 class="text-xl font-extrabold text-gray-900 flex items-center">
+      <span class="mr-3">📂</span> お気に入り動画
+    </h2>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start w-full">
+    <% if @liked_posts.any? %>
+      <%= render partial: 'posts/post', collection: @liked_posts, as: :post %>
+    <% else %>
+      <div class="col-span-full py-32 text-center bg-white rounded-3xl border-2 border-dashed border-gray-200">
+        <div class="text-5xl mb-6 opacity-30">🎬</div>
+        <p class="text-gray-500 font-bold text-lg mb-6">まだ「いいね」した動画がありません</p>
+        <%= link_to "タイムラインで動画を探す", root_path, class: "inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%# ----ここまで---- %>
+
+
+
+
+
+
+
+

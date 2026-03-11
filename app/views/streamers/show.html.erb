@@ -1,0 +1,102 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <%# --- 1. 配信者プロフィールヘッダー --- %>
+  <div class="mb-10 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+    
+    <%# アイコンエリア %>
+    <div class="w-24 h-24 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-3xl font-black shadow-xl ring-4 ring-slate-50 overflow-hidden">
+      <% if @streamer.icon.attached? %>
+        <%= image_tag @streamer.icon, class: "w-full h-full object-cover" %>
+      <% else %>
+        <%= @streamer.name&.[](0) %>
+      <% end %>
+    </div>
+    
+    <%# 右側の情報コンテンツを包む div (これが抜けていました) %>
+    <div class="flex-1 w-full">
+      <%# 名前と𝕏リンクのコンテナ：両端に飛ばす %>
+      <%# 修正：名前と𝕏リンクのコンテナ。 items-end でベースラインを下げる %>
+<%# 修正：flex-nowrap を追加して、無理やり1行に収める設定にします %>
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-6 w-full border-b border-gray-100 pb-5 overflow-hidden">
+  
+  <%# 左側：名前エリア。 min-w-0 と truncate で長い名前を「...」にします %>
+  <div class="md:pt-4 text-center md:text-left min-w-0 flex-1 mr-4">
+    <h1 class="text-4xl font-black text-gray-900 tracking-tighter leading-none truncate" title="<%= @streamer.name %>">
+      <%= @streamer.name %>
+    </h1>
+  </div>
+  
+  <%# 右側：𝕏リンク。 shrink-0 で絶対に潰されないようにします %>
+  <% if @streamer.x_url.present? %>
+    <div class="mt-4 md:mt-0 md:ml-auto md:pb-0.5 flex justify-center shrink-0">
+      <%= link_to "https://x.com{@streamer.x_url}", target: "_blank", rel: "noopener", 
+          class: "inline-flex items-center px-7 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-full text-[12px] font-bold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm group" do %>
+        <span class="mr-3 text-base text-black group-hover:scale-110 transition-transform font-bold">𝕏</span>
+        <span class="tracking-widest font-mono">@<%= @streamer.x_url %></span>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+      <%# 統計情報 %>
+      <div class="flex items-center justify-center md:justify-start space-x-8 text-gray-500 font-bold">
+        <div class="flex flex-col items-center md:items-start">
+          <span class="text-2xl text-indigo-600 leading-none"><%= @posts.count %></span>
+          <span class="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Videos</span>
+        </div>
+        <div class="w-px h-8 bg-gray-100"></div>
+        <div class="flex flex-col items-center md:items-start">
+          <span class="text-2xl text-indigo-600 leading-none"><%= number_to_human(@streamer.posts.sum(:views_count) || 0) %></span>
+          <span class="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Total Views</span>
+        </div>
+      </div>
+    </div> <%# 情報コンテンツ包み終了 %>
+  </div> <%# ヘッダー全体終了 %>
+
+  <%# --- 2. 並べ替えメニュー --- %>
+  <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+    <div class="text-sm font-bold text-gray-500 flex items-center">
+      <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2"></span>
+      この配信者の動画を並び替え
+    </div>
+    <%= render 'posts/sort_menu' %>
+  </div>
+
+  <%# --- 3. 投稿一覧セクション --- %>
+  <h2 class="text-xl font-bold mb-4 flex items-center text-gray-800 px-2">
+    <span class="mr-2 text-2xl">📝</span> 投稿一覧
+  </h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <div class="col-span-2 py-10 text-center bg-gray-50 rounded-lg text-gray-500">まだ投稿がありません。</div>
+    <% end %>
+  </div>
+
+  <%# --- 4. 管理ボタン・戻るボタン --- %>
+  <div class="mt-8 flex flex-wrap gap-4 px-2 pb-20">
+    <% if current_user&.admin? %>
+      <div data-controller="toggle" class="w-full mb-4">
+        <button data-action="click->toggle#toggle" 
+                class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-bold shadow-md">
+          <span class="mr-2 text-xl">＋</span> 新しい投稿を作成
+        </button>
+        <div data-toggle-target="content" class="hidden mt-6 bg-white p-8 rounded-2xl shadow-lg border border-indigo-50 transition-all">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-black text-gray-800">配信内容を入力</h3>
+            <button data-action="click->toggle#toggle" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition">✕</button>
+          </div>
+          <%= render partial: "shared/form", locals: {model: [@streamer, @new_post], columns: [:content, :x_video_url, :genre_ids], btn_label: "投稿する"}%>
+        </div>
+      </div>
+      <%= link_to edit_streamer_path(@streamer), class: "h-11 px-6 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-bold shadow-sm flex items-center text-sm" do %>
+        <span class="mr-2 text-lg">📝</span> プロフィールを編集
+      <% end %>
+    <% end %>
+    
+    <%= link_to root_path, class: "h-11 px-6 bg-white text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition font-bold shadow-sm flex items-center text-sm" do %>
+      <span class="mr-2 text-lg">←</span> タイムラインへ戻る
+    <% end %>
+  </div>
+</div>

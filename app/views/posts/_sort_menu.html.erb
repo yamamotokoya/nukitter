@@ -1,0 +1,12 @@
+<%# app/views/posts/_sort_menu.html.erb %>
+<div class="flex bg-gray-100 p-1 rounded-xl text-[11px] font-bold shadow-inner border border-gray-200">
+  <%# url_for(nil) は「現在のURL」を指します %>
+  <%= link_to "最新順", url_for(sort: "latest", query: params[:query]), 
+        class: "px-4 py-2 rounded-lg transition-all #{params[:sort].blank? || params[:sort] == 'latest' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+  
+  <%= link_to "人気順", url_for(sort: "likes", query: params[:query]), 
+        class: "px-4 py-2 rounded-lg transition-all #{params[:sort] == 'likes' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+  
+  <%= link_to "再生数順", url_for(sort: "views", query: params[:query]), 
+        class: "px-4 py-2 rounded-lg transition-all #{params[:sort] == 'views' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}" %>
+</div>

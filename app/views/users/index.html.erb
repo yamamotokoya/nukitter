@@ -1,0 +1,50 @@
+<%# app/views/users/index.html.erb %>
+<div class="max-w-6xl mx-auto py-10 px-4">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+      <span class="mr-2 text-indigo-600">👥</span> ユーザー管理一覧
+    </h1>
+    <span class="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full font-medium">
+      合計: <%= @users.count %> 名
+    </span>
+  </div>
+
+  <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">名前 / メールアドレス</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">権限</th>
+          <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">登録日</th>
+          <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">操作</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200 text-sm">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-bold text-gray-900"><%= user.name %></div>
+              <div class="text-gray-500 text-xs"><%= user.email %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <% if user.admin? %>
+                <span class="px-2 py-1 text-xs font-bold bg-amber-100 text-amber-700 rounded border border-amber-200">管理者</span>
+              <% else %>
+                <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded">一般</span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
+              <%= l user.created_at, format: :short rescue user.created_at.strftime("%Y/%m/%d") %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+              <%= link_to "編集", edit_user_path(user), class: "text-indigo-600 hover:text-indigo-900 font-bold" %>
+              <% unless user == current_user %> <%# 自分自身は削除できないようにガード %>
+                <%= link_to "削除", user_path(user), data: { turbo_method: :delete, turbo_confirm: "本当にこのユーザーを削除しますか？" }, class: "text-red-600 hover:text-red-900 font-bold" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

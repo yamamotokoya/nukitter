@@ -1,0 +1,36 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <% if @search_word.present? %>
+    <%# 検索実行時のヘッダー %>
+    <div class="mb-8 p-6 bg-indigo-50 rounded-2xl border border-indigo-100 shadow-sm flex flex-col md:flex-row justify-between items-center transition-all gap-4">
+      <div class="flex items-center">
+        <span class="text-2xl mr-3">🔍</span>
+        <p class="text-indigo-900 font-medium">
+          「<strong class="text-indigo-700 text-lg"><%= @search_word %></strong>」の検索結果: 
+          <span class="ml-1 font-bold text-xl"><%= @posts.count %></span> 件
+        </p>
+      </div>
+      <%= render 'sort_menu' %>
+      <%= link_to "クリア", posts_path, class: "h-9 px-4 bg-white text-indigo-600 border border-indigo-200 rounded-lg flex items-center text-sm font-bold hover:bg-indigo-600 hover:text-white transition shadow-sm" %>
+    </div>
+  <% else %>
+    <%# 通常時のヘッダー %>
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 px-1">
+      <h1 class="text-3xl font-extrabold text-gray-900 flex items-center tracking-tight">
+        <span class="mr-3">🚀</span> 最新のタイムライン
+      </h1>
+      <%= render 'sort_menu' %>
+    </div>
+  <% end %>
+
+  <%# 投稿一覧（全件表示） %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <div class="col-span-2 py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+        <div class="text-4xl mb-4">🏜️</div>
+        <p class="text-gray-500 font-bold text-lg">一致する投稿が見つかりませんでした</p>
+      </div>
+    <% end %>
+  </div>
+</div>

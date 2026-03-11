@@ -1,0 +1,43 @@
+<div class="max-w-4xl mx-auto py-8 px-4">
+  <%# --- 1. ヘッダー部分 (既存) --- %>
+  <div class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div class="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+        <span class="text-white font-bold text-xl">#</span>
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">
+          <%= @genre.name %>
+        </h1>
+        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の投稿一覧</p>
+      </div>
+    </div>
+
+    <div class="text-right">
+      <span class="block text-2xl font-black text-indigo-600 leading-none">
+        <%= @posts.count %> <%# @posts_count を @posts.count に修正（安全のため） %>
+      </span>
+      <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 block">Videos</span>
+    </div>
+  </div>
+
+  <%# --- 2. ここに追加：並べ替えメニューエリア --- %>
+  <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+    <div class="text-sm font-bold text-gray-500 flex items-center">
+      <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 mr-2"></span>
+      表示順を切り替える
+    </div>
+    <%= render 'posts/sort_menu' %>
+  </div>
+
+  <%# --- 3. 投稿一覧 (既存) --- %>
+  <div class="grid gap-6 md:grid-cols-2">
+    <% if @posts.any? %>
+      <%= render @posts %>
+    <% else %>
+      <div class="col-span-2 py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+        <p class="text-gray-500">このジャンルの投稿はまだありません。</p>
+      </div>
+    <% end %>
+  </div>
+</div>

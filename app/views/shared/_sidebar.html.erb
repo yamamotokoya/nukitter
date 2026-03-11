@@ -1,0 +1,58 @@
+        <%= turbo_frame_tag "sidebar_content" do %>
+          <div class="p-6">            
+             <%# ランキング切り替えセクション %>
+              <% if @sidebar_ranked_streamers&.any? %>
+                <div class="pt-6 border-t border-slate-800">
+                  <div class="flex items-center justify-between mb-4 px-1">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center shrink-0">⭐ Ranking</p>
+                    <div class="flex items-center space-x-1 ml-auto shrink-0">
+                      <% ["posts", "likes", "views"].each do |type| %>
+                        <%= link_to sidebar_path(rank: type), data: { turbo_frame: "sidebar_content" }, class: "w-5 h-5 flex items-center justify-center rounded text-[10px] transition-all #{params[:rank] == type || (params[:rank].blank? && type == 'posts') ? 'bg-amber-500 text-slate-900' : 'bg-slate-800'}" do %>
+                          <%= { "posts" => "📝", "likes" => "❤️", "views" => "👁️" }[type] %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <% @sidebar_ranked_streamers.each do |streamer| %>
+                      <%= link_to streamer_path(streamer), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                        <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-600">
+                          <% if streamer.icon.attached? %><%= image_tag streamer.icon, class: "w-full h-full object-cover" %><% else %><%= streamer.name&.[](0) %><% end %>
+                        </div>
+                        <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
+                          <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= streamer.name %></p>
+                          <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap uppercase tracking-tighter">
+                            <% if params[:rank] == "likes" %>
+                              <%= number_to_human(streamer.total_likes) rescue "0" %> likes
+                            <% elsif params[:rank] == "views" %>
+                              <%= number_to_human(streamer.total_views) rescue "0" %> views
+                            <% else %>
+                              <%= streamer.posts_count %> videos
+                            <% end %>
+                          </p>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+
+              <%# 管理・ユーザーセクション %>
+              <div class="pt-6 border-t border-slate-800 pb-10">
+                <% if logged_in? %>
+                  <% if current_user&.admin? %>
+                    <div class="mb-4 px-1 flex flex-col space-y-2">
+                      <span class="bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase w-fit">Admin</span>
+                      <%= link_to "配信者登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400" %>
+                      <%= link_to "配信者一覧", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400" %>
+                    </div>
+                  <% end %>
+                  <%= button_to "ログアウト", logout_path, method: :delete, data: { turbo: false }, class: "w-full text-center text-[10px] font-bold bg-slate-800 py-2 rounded-lg text-slate-400" %>
+                <% else %>
+                  <%= link_to "ログイン", login_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-slate-800 py-2.5 rounded-lg text-white mb-2" %>
+                  <%= link_to signup_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-indigo-600 py-2.5 rounded-lg hover:bg-indigo-500 text-white shadow-lg" do %>新規登録<% end %>
+                <% end %>
+              </div>
+            </nav>
+          </div>
+        <% end %>

@@ -1,0 +1,91 @@
+<div class="max-w-4xl mx-auto py-10 px-4">
+  <%# 戻るボタン %>
+  <div class="mb-6">
+    <%= link_to :back, class: "inline-flex items-center text-sm font-bold text-gray-500 hover:text-indigo-600 transition" do %>
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      戻る
+    <% end %>
+  </div>
+
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <%# 1. 動画表示エリア %>
+    <div class="aspect-video bg-black flex items-center justify-center">
+      <% if @post.x_video_url.present? %>
+        <div id="x-embed-container" class="w-full max-w-[550px] mx-auto overflow-hidden">
+          <%# data-media-max-width="560" で動画のみ表示 %>
+          <blockquote class="twitter-video" data-media-max-width="560" data-lang="ja">
+            <a href="<%= @post.x_video_url %>"></a>
+          </blockquote>
+        </div>
+
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <script>
+          function loadXVideo() {
+            if (window.twttr && window.twttr.widgets) {
+              window.twttr.widgets.load(document.getElementById('x-embed-container'));
+            }
+          }
+          loadXVideo();
+          document.addEventListener("turbo:load", loadXVideo);
+        </script>
+      <% else %>
+        <p class="text-gray-500">動画URLが設定されていません</p>
+      <% end %>
+    </div>
+
+    <%# 2. テキスト・詳細エリア %>
+    <div class="p-8 md:p-12">
+      <div class="text-gray-800 text-lg leading-relaxed break-words whitespace-pre-wrap mb-10 font-medium">
+        <%= auto_link(@post.content, html: { class: 'text-indigo-600 hover:underline' }) %>
+      </div>
+
+      <div class="pt-8 border-t border-gray-100">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Genres</p>
+        <div class="flex flex-wrap gap-3">
+          <% @post.genres.each do |genre| %>
+            <%= link_to genre_path(genre), class: "px-4 py-2 bg-indigo-50 text-indigo-600 text-sm font-bold rounded-full border border-indigo-100 hover:bg-indigo-600 hover:text-white transition shadow-sm" do %>
+              # <%= genre.name %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# 下部の「他の動画」セクション %>
+<div class="max-w-4xl mx-auto px-4 mt-16 pb-20">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+      <span class="mr-2">📺</span> <%= @post.streamer.name %> の他の動画
+    </h2>
+    <%= link_to "すべて見る", streamer_path(@post.streamer), class: "text-sm font-bold text-indigo-600 hover:underline" %>
+  </div>
+
+  <% if @other_posts.any? %>
+    <div class="flex overflow-x-auto pb-6 gap-6 scrollbar-hide snap-x snap-mandatory">
+      <% @other_posts.each do |other_post| %>
+        <div class="min-w-[280px] md:min-w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+          <%= link_to post_path(other_post), class: "block group" do %>
+            <div class="aspect-video bg-gray-900 relative flex items-center justify-center">
+               <div class="text-white/50 flex flex-col items-center">
+                  <svg class="w-8 h-8 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <span class="text-[10px]">Watch on X</span>
+               </div>
+            </div>
+            <div class="p-4">
+              <p class="text-sm font-bold text-gray-800 line-clamp-2 leading-snug">
+                <%= other_post.content %>
+              </p>
+              <p class="text-[10px] text-gray-400 mt-2">
+                <%= other_post.created_at.strftime("%Y/%m/%d") %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
