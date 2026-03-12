@@ -5,11 +5,12 @@ Rails.application.routes.draw do
   resources :streamers do
   resources :posts, only: [:create, :destroy] # streamerに紐づく投稿の作成
 end
-  resources :genres, only: [:show]
+  resources :genres, only: [:show, :new]
   resources :posts do
   resource :likes, only: [:create, :destroy]
 end
   resource :history, only: [:destroy]
+  
 
 
   get    '/login',  to: 'sessions#new'
