@@ -1,12 +1,12 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
+  prepend_before_action :fallback_to_html_format
 
   stale_when_importmap_changes
 
   helper_method :current_user, :logged_in?
 
   before_action :set_sidebar_data
-  before_action :set_default_format
 
   layout -> { false if turbo_frame_request? }
 
@@ -59,8 +59,11 @@ def set_sidebar_data
   end.limit(5)
 end
 
-  def set_default_format
-    request.format = :html if request.format.to_s.blank? || request.format == "*/*"
-  end
+def fallback_to_html_format
+    # リクエストが空、または「何でも良い(*/*)」の場合のみHTMLをセット
+    if request.format.to_s.blank? || request.format == "*/*"
+      request.format = :html
+    end
+end
 
 end
