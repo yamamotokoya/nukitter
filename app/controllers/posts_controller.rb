@@ -16,9 +16,9 @@ class PostsController < ApplicationController
         @posts = @posts.sorted_by(params[:sort])
 
         respond_to do |format|
-    format.html # 通常のアクセス
-    format.turbo_stream { render :index, formats: [:html] } # 無限スクロールの残党が来てもHTMLを返す
-  end
+            format.html # 通常のアクセス
+            format.turbo_stream { render :index, formats: [:html] } # 無限スクロールの残党が来てもHTMLを返す
+        end
     end
 
 

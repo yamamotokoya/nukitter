@@ -1,13 +1,12 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
   helper_method :current_user, :logged_in?
 
   before_action :set_sidebar_data
+  before_action :set_default_format
 
   layout -> { false if turbo_frame_request? }
 
@@ -33,21 +32,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # def set_sidebar_genres
-  #   # 1. 投稿(posts)が存在するジャンルだけに絞り
-  #   # 2. 投稿数(posts_count)をカウントし
-  #   # 3. 投稿が多い順に並べる
-  #   @sidebar_genres = Genre.joins(:posts)
-  #                          .group(:id)
-  #                          .select("genres.*, COUNT(posts.id) AS posts_count")
-  #                          .order("posts_count DESC")
-
-  #   if logged_in?
-  #     @sidebar_likes = current_user.liked_posts.includes(:streamer).order("likes.created_at DESC").limit(5)
-  #   end
-  # end
-
-  # app/controllers/application_controller.rb
 def set_sidebar_data
   # 1. ジャンル一覧
   @sidebar_genres = Genre.joins(:posts).group(:id).select("genres.*, COUNT(posts.id) AS posts_count").order("posts_count DESC")
@@ -74,5 +58,9 @@ def set_sidebar_data
     base_query.select("streamers.*, COUNT(posts.id) AS posts_count").order("posts_count DESC")
   end.limit(5)
 end
+
+  def set_default_format
+    request.format = :html if request.format.to_s.blank? || request.format == "*/*"
+  end
 
 end
