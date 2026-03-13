@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [ "content", "overlay" ]
 
+  connect() {
+    this.element.style.cursor = "pointer"
+  }
+
   toggle() {
     // メニューが隠れている（-translate-x-fullを持っている）なら開く、そうでなければ閉じる
     if (this.contentTarget.classList.contains("-translate-x-full")) {
