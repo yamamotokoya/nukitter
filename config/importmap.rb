@@ -48,13 +48,17 @@
 # pin "controllers/removable_controller", to: "controllers/removable_controller.js"
 # pin "controllers/submit_controller", to: "controllers/submit_controller.js"
 # pin "controllers/toggle_controller", to: "controllers/toggle_controller.js"
-# pin "controllers/video_preview_controller", to: "controllers/video_preview_controller.js"
+# pin "application"
+# pin "@hotwired/turbo-rails", to: "turbo.min.js"
+# pin "@hotwired/stimulus", to: "stimulus.min.js"
+# pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 
+# # フォルダ全体をピン留めする。これが一番404になりにくい公式の書き方です
+# pin_all_from "app/javascript/controllers", under: "controllers"
 # config/importmap.rb
-pin "application"
-pin "@hotwired/turbo-rails", to: "turbo.min.js"
-pin "@hotwired/stimulus", to: "stimulus.min.js"
-pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
-
-# フォルダ全体をピン留めする。これが一番404になりにくい公式の書き方です
+pin "application", preload: true
+pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
+pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
+pin "@hotwired/stimulus-loading", to: "stimulus-loading.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
+
