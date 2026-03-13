@@ -21,7 +21,8 @@
           
           <div style="display: flex; align-items: center; width: 240px; flex-shrink: 0; margin-bottom: 0;">
             <%# メニューボタン：Frameの外にあるので、ランキングを切り替えても確実に反応します %>
-            <button data-action="click->menu#toggle" 
+            <button onclick="document.getElementById('side_menu_main').classList.toggle('hidden'); document.getElementById('menu_overlay').classList.toggle('hidden');" 
+                    data-action="click->menu#toggle" 
                     style="cursor: pointer; -webkit-tap-highlight-color: transparent;"
                     class="group relative w-11 h-11 flex items-center justify-center bg-white text-slate-700 hover:text-indigo-600 rounded-xl border border-slate-100 shadow-sm transition-all active:scale-95 shrink-0 z-50 overflow-hidden">
               <svg class="h-6 w-6 fill-none stroke-current" viewBox="0 0 24 24">
@@ -51,7 +52,8 @@
       </div>
 
       <%# --- B. オーバーレイ（背景の膜）：JSエラー防止のために必須 --- %>
-      <div data-menu-target="overlay" data-action="click->menu#toggle" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+      <div  id="menu_overlay" onclick="this.classList.add('hidden'); document.getElementById('side_menu_main').classList.add('hidden');" 
+            data-menu-target="overlay" data-action="click->menu#toggle" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
 
       <%# --- C. サイドメニュー本体 --- %>
       <div id="side_menu_main" 
