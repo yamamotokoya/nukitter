@@ -6,8 +6,10 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%# iOS 16以前でも動くように shim を明示的に指定します %>
-    <%= javascript_importmap_tags "es-module-shims" %>
+    <%# 修正後：標準に戻します。iPhone対策は別の行で行います %>
+    <%= javascript_importmap_tags %>
+    <%# そのすぐ下に、iPhone用の「おまじない」を直接書きます %>
+    <script async src="https://ga.jspm.io"></script>
     <script async src="https://ga.jspm.io" data-turbo-track="reload"></script>
     <script async src="https://platform.twitter.com" charset="utf-8"></script>
   </head>
