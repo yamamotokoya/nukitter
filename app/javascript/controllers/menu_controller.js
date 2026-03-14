@@ -66,32 +66,32 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [ "content", "overlay" ]
 
-  toggle() {
+  // iOS Safari でクリックイベントを確実に拾わせるための設定
+  connect() {
+    this.element.style.cursor = "pointer"
+  }
+
+  toggle(event) {
+    if (event) event.preventDefault()
     this.contentTarget.classList.contains("-translate-x-full") ? this.open() : this.close()
   }
 
   open() {
     this.overlayTarget.classList.remove("hidden")
-    // ブラウザに描画を待たせる
-    requestAnimationFrame(() => {
+    // iOS でのアニメーション不発を防ぐための短い待機
+    setTimeout(() => {
       this.overlayTarget.classList.add("opacity-100")
       this.contentTarget.classList.remove("-translate-x-full")
       document.body.classList.add("overflow-hidden")
-    })
+    }, 20)
   }
 
   close() {
     this.contentTarget.classList.add("-translate-x-full")
     this.overlayTarget.classList.remove("opacity-100")
-    this.overlayTarget.classList.add("opacity-0")
-    
-    // アニメーションが終わる300ms後にhiddenにする
     setTimeout(() => {
-      if (this.contentTarget.classList.contains("-translate-x-full")) {
-        this.overlayTarget.classList.add("hidden")
-        document.body.classList.remove("overflow-hidden")
-      }
+      this.overlayTarget.classList.add("hidden")
+      document.body.classList.remove("overflow-hidden")
     }, 300)
   }
 }
-
