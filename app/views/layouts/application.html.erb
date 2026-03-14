@@ -81,7 +81,7 @@
               </p>
               <div class="space-y-2">
                 <% @sidebar_likes.each do |post| %>
-                  <%= link_to post_path(post), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                  <%= link_to post_path(post), data: { turbo_frame: "_top", action: "click->menu#close" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
                     <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white">
                       <% if post.streamer.icon.attached? %>
                         <%= image_tag post.streamer.icon, class: "w-full h-full rounded-full object-cover" %>
@@ -101,7 +101,7 @@
               </p>
               <div class="space-y-2">
                 <% @sidebar_histories.each do |post| %>
-                  <%= link_to post_path(post), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                  <%= link_to post_path(post), data: { turbo_frame: "_top", action: "click->menu#close" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
                     <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-400 group-hover:bg-indigo-600 group-hover:text-white">
                       <% if post.streamer.icon.attached? %>
                         <%= image_tag post.streamer.icon, class: "w-full h-full rounded-full object-cover" %>
@@ -124,7 +124,7 @@
           </p>
           <div class="flex flex-wrap gap-2 px-1">
             <% @sidebar_genres.each do |genre| %>
-              <%= link_to genre_path(genre), data: { turbo_frame: "_top" }, class: "text-[10px] bg-slate-800 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-md border border-slate-700 transition-all flex items-center font-bold" do %>
+              <%= link_to genre_path(genre), data: { turbo_frame: "_top", action: "click->menu#close" }, class: "text-[10px] bg-slate-800 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-md border border-slate-700 transition-all flex items-center font-bold" do %>
                 <span class="opacity-50 mr-1">#</span><%= genre.name %>
               <% end %>
             <% end %>
