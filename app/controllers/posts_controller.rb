@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
-    before_action :set_post, only: :show
-    before_action :ensure_admin!, only: [:new, :create]
+    before_action :set_post, only: [:show, :destroy]
+    before_action :ensure_admin!, only: [:new, :create, :destroy]
 
     def index
         @posts = Post.includes(:streamer, :genres).where.not(streamer_id: nil)
@@ -54,6 +54,11 @@ class PostsController < ApplicationController
 
 
         @other_posts = @post.streamer.posts.where.not(id: @post.id).limit(6)
+    end
+
+    def destroy
+        @post.destroy
+        redirect_to root_path, notice: "削除しました", status: :see_other
     end
 
     private 
