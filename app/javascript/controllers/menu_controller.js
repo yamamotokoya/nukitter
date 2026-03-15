@@ -7,8 +7,8 @@ export default class extends Controller {
     this.startX = 0
     this.currentX = 0
     this.isOpen = false
+    this.isSwiping = false // スワイプ中かどうかのフラグを追加
 
-    // タッチイベントの登録（スマホ用）
     this.boundTouchStart = this.touchStart.bind(this)
     this.boundTouchMove = this.touchMove.bind(this)
     this.boundTouchEnd = this.touchEnd.bind(this)
@@ -24,10 +24,10 @@ export default class extends Controller {
     document.removeEventListener('touchend', this.boundTouchEnd)
   }
 
-  // --- タッチ操作 ---
   touchStart(e) {
     this.startX = e.touches[0].clientX
-    this.isSwipeEdge = !this.isOpen && this.startX < 40 // 左端40px以内
+    this.isSwipeEdge = !this.isOpen && this.startX < 40
+    this.isSwiping = false 
   }
 
   touchMove(e) {
@@ -36,12 +36,15 @@ export default class extends Controller {
     this.currentX = e.touches[0].clientX
     let diff = this.currentX - this.startX
 
+    // スワイプ方向の判定と、意図しない発火の防止
+    if (this.isOpen && diff > 0) return 
+    if (!this.isOpen && diff < 0) return
+
+    this.isSwiping = true
     if (this.isOpen) {
-      if (diff < 0) { // 左へスワイプして閉じる
-        this.applyStyle(diff)
-      }
+      if (diff < 0) this.applyStyle(diff)
     } else {
-      if (diff > 0 && diff <= 288) { // 右へスワイプして出す
+      if (diff > 0 && diff <= 288) {
         this.overlayTarget.classList.remove("hidden")
         this.applyStyle(-288 + diff)
       }
@@ -49,8 +52,11 @@ export default class extends Controller {
   }
 
   touchEnd() {
+    if (!this.isSwiping) return // スワイプしていなければ何もしない（PCクリックを邪魔しない）
+
     let diff = this.currentX - this.startX
-    // スタイルをクリアしてCSS制御に戻す前に判定
+    
+    // スタイルをリセットしてCSS制御に戻す
     this.contentTarget.style.transition = "transform 0.3s ease"
     this.contentTarget.style.transform = ""
     this.overlayTarget.style.opacity = ""
@@ -63,20 +69,19 @@ export default class extends Controller {
       else if (this.isSwipeEdge) this.close()
     }
     
-    // スタイルをリセット
     setTimeout(() => {
       this.contentTarget.style.transition = ""
+      this.isSwiping = false
     }, 300)
     this.isSwipeEdge = false
   }
 
   applyStyle(x) {
     this.contentTarget.style.transform = `translateX(${x}px)`
-    this.contentTarget.style.transition = "none" // スワイプ中はアニメを止めて指に追従
+    this.contentTarget.style.transition = "none" 
     this.overlayTarget.style.opacity = Math.min(1, (x + 288) / 288)
   }
 
-  // --- 共通アクション ---
   toggle() {
     this.contentTarget.classList.contains("-translate-x-full") ? this.open() : this.close()
   }
@@ -84,7 +89,6 @@ export default class extends Controller {
   open() {
     this.isOpen = true
     this.overlayTarget.classList.remove("hidden")
-    // リフローを強制してアニメーションを確実に発火させる
     void this.contentTarget.offsetWidth 
     this.overlayTarget.classList.add("opacity-100")
     this.contentTarget.classList.remove("-translate-x-full")
