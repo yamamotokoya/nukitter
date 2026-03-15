@@ -72,12 +72,22 @@ export default class extends Controller {
   // }
 
   connect() {
-    // メニュー内のリンクをクリックしたら、勝手に閉じるアニメーションを開始させる
-    this.contentTarget.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => this.close())
-    })
-  }
+  this.contentTarget.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      // 1. 一旦、素の遷移を止める
+      e.preventDefault()
+      const href = link.getAttribute('href')
 
+      // 2. 「スッ」と閉じるアニメーションを開始
+      this.close()
+
+      // 3. アニメーションの途中で、物理的にページを飛ばす（0.15秒後がベスト）
+      setTimeout(() => {
+        window.location.href = href
+      }, 150) 
+    })
+  })
+}
   // open(), close(), toggle() は今の「スッ」と動くロジックのまま！
   close() {
     this.contentTarget.classList.add("-translate-x-full")
