@@ -8,17 +8,26 @@ export default class extends Controller {
     this.currentX = 0
     this.isOpen = false
 
-    // 指が触れた瞬間のイベント登録
-    document.addEventListener('touchstart', this.touchStart.bind(this), { passive: true })
-    document.addEventListener('touchmove', this.touchMove.bind(this), { passive: false })
-    document.addEventListener('touchend', this.touchEnd.bind(this), { passive: true })
+    // タッチイベントの登録（スマホ用）
+    this.boundTouchStart = this.touchStart.bind(this)
+    this.boundTouchMove = this.touchMove.bind(this)
+    this.boundTouchEnd = this.touchEnd.bind(this)
+
+    document.addEventListener('touchstart', this.boundTouchStart, { passive: true })
+    document.addEventListener('touchmove', this.boundTouchMove, { passive: false })
+    document.addEventListener('touchend', this.boundTouchEnd, { passive: true })
   }
 
-  // --- フリック操作のロジック ---
+  disconnect() {
+    document.removeEventListener('touchstart', this.boundTouchStart)
+    document.removeEventListener('touchmove', this.boundTouchMove)
+    document.removeEventListener('touchend', this.boundTouchEnd)
+  }
+
+  // --- タッチ操作 ---
   touchStart(e) {
     this.startX = e.touches[0].clientX
-    // 画面の左端（30px以内）からスワイプ開始した時だけ反応させる
-    this.isSwipeEdge = this.startX < 30 
+    this.isSwipeEdge = !this.isOpen && this.startX < 40 // 左端40px以内
   }
 
   touchMove(e) {
@@ -28,36 +37,46 @@ export default class extends Controller {
     let diff = this.currentX - this.startX
 
     if (this.isOpen) {
-      // メニューが開いている時に左へスワイプして閉じる
-      if (diff < 0) {
-        this.contentTarget.style.transform = `translateX(${diff}px)`
-        this.overlayTarget.style.opacity = Math.max(0, 1 + diff / 300)
+      if (diff < 0) { // 左へスワイプして閉じる
+        this.applyStyle(diff)
       }
     } else {
-      // 画面左端から右へスワイプして出す
-      if (diff > 0 && diff <= 288) {
-        this.contentTarget.style.transform = `translateX(${-288 + diff}px)`
+      if (diff > 0 && diff <= 288) { // 右へスワイプして出す
         this.overlayTarget.classList.remove("hidden")
-        this.overlayTarget.style.opacity = diff / 300
+        this.applyStyle(-288 + diff)
       }
     }
   }
 
   touchEnd() {
     let diff = this.currentX - this.startX
-    if (this.isOpen) {
-      if (diff < -100) this.close() // 100px以上左へ引いたら閉じる
-      else this.open() // 戻す
-    } else {
-      if (diff > 100) this.open() // 100px以上右へ引いたら開く
-      else this.close() // 戻す
-    }
-    // インラインスタイルをクリアしてCSSのクラス制御に戻す
+    // スタイルをクリアしてCSS制御に戻す前に判定
+    this.contentTarget.style.transition = "transform 0.3s ease"
     this.contentTarget.style.transform = ""
     this.overlayTarget.style.opacity = ""
+
+    if (this.isOpen) {
+      if (diff < -80) this.close()
+      else this.open()
+    } else {
+      if (this.isSwipeEdge && diff > 80) this.open()
+      else if (this.isSwipeEdge) this.close()
+    }
+    
+    // スタイルをリセット
+    setTimeout(() => {
+      this.contentTarget.style.transition = ""
+    }, 300)
+    this.isSwipeEdge = false
   }
 
-  // --- 従来のクリック操作 ---
+  applyStyle(x) {
+    this.contentTarget.style.transform = `translateX(${x}px)`
+    this.contentTarget.style.transition = "none" // スワイプ中はアニメを止めて指に追従
+    this.overlayTarget.style.opacity = Math.min(1, (x + 288) / 288)
+  }
+
+  // --- 共通アクション ---
   toggle() {
     this.contentTarget.classList.contains("-translate-x-full") ? this.open() : this.close()
   }
@@ -65,11 +84,11 @@ export default class extends Controller {
   open() {
     this.isOpen = true
     this.overlayTarget.classList.remove("hidden")
-    setTimeout(() => {
-      this.overlayTarget.classList.add("opacity-100")
-      this.contentTarget.classList.remove("-translate-x-full")
-      document.body.classList.add("overflow-hidden")
-    }, 10)
+    // リフローを強制してアニメーションを確実に発火させる
+    void this.contentTarget.offsetWidth 
+    this.overlayTarget.classList.add("opacity-100")
+    this.contentTarget.classList.remove("-translate-x-full")
+    document.body.classList.add("overflow-hidden")
   }
 
   close() {
@@ -77,7 +96,7 @@ export default class extends Controller {
     this.contentTarget.classList.add("-translate-x-full")
     this.overlayTarget.classList.remove("opacity-100")
     setTimeout(() => {
-      this.overlayTarget.classList.add("hidden")
+      if (!this.isOpen) this.overlayTarget.classList.add("hidden")
       document.body.classList.remove("overflow-hidden")
     }, 300)
   }
