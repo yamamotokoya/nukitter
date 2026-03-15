@@ -6,8 +6,7 @@
 
 // import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
 // eagerLoadControllersFrom("controllers", application)
-// controllers を c に書き換えます
-import { application } from "c/application"
+// c を controllers に戻す
+import { application } from "controllers/application"
 import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
-eagerLoadControllersFrom("c", application)
-
+eagerLoadControllersFrom("controllers", application)
