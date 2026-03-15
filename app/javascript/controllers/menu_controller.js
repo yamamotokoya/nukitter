@@ -67,8 +67,25 @@ export default class extends Controller {
   static targets = [ "content", "overlay" ]
 
   // iOS Safari でクリックイベントを確実に拾わせるための設定
+  // connect() {
+  //   this.element.style.cursor = "pointer"
+  // }
+
   connect() {
-    this.element.style.cursor = "pointer"
+    // メニュー内のリンクをクリックしたら、勝手に閉じるアニメーションを開始させる
+    this.contentTarget.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => this.close())
+    })
+  }
+
+  // open(), close(), toggle() は今の「スッ」と動くロジックのまま！
+  close() {
+    this.contentTarget.classList.add("-translate-x-full")
+    this.overlayTarget.classList.remove("opacity-100")
+    setTimeout(() => {
+      this.overlayTarget.classList.add("hidden")
+      document.body.classList.remove("overflow-hidden")
+    }, 300)
   }
 
   toggle(event) {
@@ -86,12 +103,12 @@ export default class extends Controller {
     }, 20)
   }
 
-  close() {
-    this.contentTarget.classList.add("-translate-x-full")
-    this.overlayTarget.classList.remove("opacity-100")
-    setTimeout(() => {
-      this.overlayTarget.classList.add("hidden")
-      document.body.classList.remove("overflow-hidden")
-    }, 300)
-  }
+  // close() {
+  //   this.contentTarget.classList.add("-translate-x-full")
+  //   this.overlayTarget.classList.remove("opacity-100")
+  //   setTimeout(() => {
+  //     this.overlayTarget.classList.add("hidden")
+  //     document.body.classList.remove("overflow-hidden")
+  //   }, 300)
+  // }
 }
