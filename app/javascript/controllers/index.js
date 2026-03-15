@@ -2,7 +2,12 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "controllers/application"
+// import { application } from "controllers/application"
 
+// import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
+// eagerLoadControllersFrom("controllers", application)
+// controllers を c に書き換えます
+import { application } from "c/application"
 import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
-eagerLoadControllersFrom("controllers", application)
+eagerLoadControllersFrom("c", application)
+
