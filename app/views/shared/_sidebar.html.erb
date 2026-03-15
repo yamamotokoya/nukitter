@@ -50,8 +50,8 @@
                   <% end %>
                   <%= button_to "ログアウト", logout_path, method: :delete, data: { turbo: false }, class: "w-full text-center text-[10px] font-bold bg-slate-800 py-2 rounded-lg text-slate-400" %>
                 <% else %>
-                  <%= link_to "ログイン", login_path, data: { turbo: false, action: "mousedown->menu#close" }, class: "block text-[11px] font-bold text-center bg-slate-800 py-2.5 rounded-lg text-white mb-2" %>
-                  <%= link_to signup_path, data: { turbo: false, action: "mousedown->menu#close" }, class: "block text-[11px] font-bold text-center bg-indigo-600 py-2.5 rounded-lg hover:bg-indigo-500 text-white shadow-lg" do %>新規登録<% end %>
+                  <%= link_to "ログイン", login_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-slate-800 py-2.5 rounded-lg text-white mb-2" %>
+                  <%= link_to signup_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-indigo-600 py-2.5 rounded-lg hover:bg-indigo-500 text-white shadow-lg" do %>新規登録<% end %>
                 <% end %>
               </div>
             </nav>
