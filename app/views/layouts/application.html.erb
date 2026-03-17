@@ -142,5 +142,14 @@
       <div class="hidden"><%= turbo_frame_tag "sidebar_content" %></div>
       <%= yield %>
     </main>
+    
+    <footer class="py-8 border-t border-slate-100 bg-white">
+      <div class="max-w-7xl mx-auto px-6 text-center space-x-4">
+        <%= link_to "利用規約", terms_path, class: "text-xs text-slate-400 hover:text-slate-600" %>
+        <%= link_to "プライバシーポリシー", privacy_path, class: "text-xs text-slate-400 hover:text-slate-600" %>
+        <p class="mt-4 text-[10px] text-slate-300">&copy; <%= Time.current.year %> NuKitter</p>
+      </div>
+    </footer>
+
   </body>
 </html>

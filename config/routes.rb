@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "pages/terms"
+  get "pages/privacy"
   root "posts#index"
   get "confirm_age", to: "welcome#confirm_age"
   post "approve_age", to: "welcome#approve_age"
@@ -23,6 +25,9 @@ end
   post "signup", to: "users#create"
 
   get 'sidebar', to: 'application#sidebar', as: :sidebar
+
+  get 'terms', to: 'pages#terms'
+  get 'privacy', to: 'pages#privacy'
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
