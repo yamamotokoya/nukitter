@@ -1,0 +1,33 @@
+<%# app/views/welcome/confirm_age.html.erb %>
+<!DOCTYPE html>
+<html class="h-full bg-slate-900">
+<head>
+  <title>年齢確認 | NuKitter</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+</head>
+<body class="h-full flex items-center justify-center p-6">
+  <div class="max-w-md w-full bg-white rounded-3xl p-10 shadow-2xl text-center">
+    <h1 class="text-3xl font-black text-slate-900 mb-6 tracking-tighter italic">NuKitter</h1>
+    
+    <p class="text-slate-600 font-bold mb-8 leading-relaxed">
+      このサイトにはアダルトコンテンツが含まれています。<br>
+      あなたは18歳以上ですか？
+    </p>
+
+    <div class="space-y-4">
+      <%= button_to "はい、18歳以上です", approve_age_path, method: :post, 
+          class: "w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-2xl shadow-lg transition-all active:scale-95" %>
+      
+      <a href="https://www.google.com" 
+         class="block w-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold py-4 rounded-2xl transition-all">
+        いいえ、退出します
+      </a>
+    </div>
+
+    <p class="mt-8 text-[10px] text-slate-400 font-medium">
+      ※18歳未満の方の閲覧は固くお断りいたします。
+    </p>
+  </div>
+</body>
+</html>

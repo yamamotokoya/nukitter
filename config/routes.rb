@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   root "posts#index"
+  get "confirm_age", to: "welcome#confirm_age"
+  post "approve_age", to: "welcome#approve_age"
   resources :users
   resources :posts
   resources :streamers do
