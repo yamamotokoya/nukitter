@@ -1,41 +1,65 @@
         <%= turbo_frame_tag "sidebar_content" do %>
           <div class="p-6">            
-             <%# ランキング切り替えセクション %>
-              <% if @sidebar_ranked_streamers&.any? %>
+              <%# ここから新ランキング切り替えセクション %>
+              <% if @sidebar_ranked_items&.any? %>
                 <div class="pt-6 border-t border-slate-800">
                   <div class="flex items-center justify-between mb-4 px-1">
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center shrink-0">⭐ Ranking</p>
                     <div class="flex items-center space-x-1 ml-auto shrink-0">
-                      <% ["posts", "likes", "views"].each do |type| %>
-                        <%= link_to sidebar_path(rank: type), data: { turbo_frame: "sidebar_content" }, class: "w-5 h-5 flex items-center justify-center rounded text-[10px] transition-all #{params[:rank] == type || (params[:rank].blank? && type == 'posts') ? 'bg-amber-500 text-slate-900' : 'bg-slate-800'}" do %>
-                          <%= { "posts" => "📝", "likes" => "❤️", "views" => "👁️" }[type] %>
+                      <% [["posts", "📝"], ["likes", "❤️"], ["views", "👁️"]].each do |type, icon| %>
+                        <%= link_to sidebar_path(rank: type), data: { turbo_frame: "sidebar_content" }, class: "w-5 h-5 flex items-center justify-center rounded text-[10px] transition-all #{params[:rank] == type || (params[:rank].blank? && type == 'posts') ? 'bg-amber-500 text-slate-900' : 'bg-slate-800 text-slate-400'}" do %>
+                          <%= icon %>
                         <% end %>
                       <% end %>
                     </div>
                   </div>
+
                   <div class="space-y-2">
-                    <% @sidebar_ranked_streamers.each do |streamer| %>
-                      <%= link_to streamer_path(streamer), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
-                        <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-600">
-                          <% if streamer.icon.attached? %><%= image_tag streamer.icon, class: "w-full h-full object-cover" %><% else %><%= streamer.name&.[](0) %><% end %>
-                        </div>
-                        <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
-                          <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= streamer.name %></p>
-                          <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap uppercase tracking-tighter">
-                            <% if params[:rank] == "likes" %>
-                              <%= number_to_human(streamer.total_likes) rescue "0" %> likes
-                            <% elsif params[:rank] == "views" %>
-                              <%= number_to_human(streamer.total_views) rescue "0" %> views
+                    <% @sidebar_ranked_items.each do |item| %>
+                      <% if item.is_a?(Post) %>
+                        <%# --- 1. 投稿(Post)ランキング：いいね・再生数 --- %>
+                        <%= link_to post_path(item), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                          <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-700">
+                            <% if item.streamer.icon.attached? %>
+                              <%= image_tag item.streamer.icon, class: "w-full h-full object-cover" %>
                             <% else %>
-                              <%= streamer.posts_count %> videos
+                              <span class="text-[10px] text-slate-500"><%= item.streamer.name&.[](0) %></span>
                             <% end %>
-                          </p>
-                        </div>
+                          </div>
+                          <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
+                            <%# contentを表示、なければ配信者名 %>
+                            <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white">
+                              <%= item.content.presence&.truncate(15) || "#{item.streamer.name}の投稿" %>
+                            </p>
+                            <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap uppercase tracking-tighter">
+                              <%= item.streamer.name %> • 
+                              <%= params[:rank] == "likes" ? "#{item.likes_count} likes" : "#{item.views_count} views" %>
+                            </p>
+                          </div>
+                        <% end %>
+                      <% else %>
+                        <%# --- 2. 配信者(Streamer)ランキング：投稿数 --- %>
+                        <%= link_to streamer_path(item), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
+                          <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-600">
+                            <% if item.icon.attached? %>
+                              <%= image_tag item.icon, class: "w-full h-full object-cover" %>
+                            <% else %>
+                              <span class="text-xs font-bold text-slate-400"><%= item.name&.[](0) %></span>
+                            <% end %>
+                          </div>
+                          <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
+                            <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white"><%= item.name %></p>
+                            <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap uppercase tracking-tighter">
+                              <%= item.posts_count %> videos
+                            </p>
+                          </div>
+                        <% end %>
                       <% end %>
                     <% end %>
                   </div>
                 </div>
               <% end %>
+              <%# ここまで新ランキング切り替えセクション %>
 
               <%# 管理・ユーザーセクション %>
               <div class="pt-6 border-t border-slate-800 pb-10">

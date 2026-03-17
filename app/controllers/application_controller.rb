@@ -47,16 +47,20 @@ class ApplicationController < ActionController::Base
     end
 
     # 3. 配信者ランキング (古い @sidebar_recommended_streamers をこれに集約)
-    base_query = Streamer.joins(:posts).group(:id)
+    # base_query = Streamer.joins(:posts).group(:id)
 
-    @sidebar_ranked_streamers = case params[:rank]
+    @sidebar_ranked_items = case params[:rank]
     when "likes" # 総いいね数順
-      base_query.select("streamers.*, SUM(posts.likes_count) AS total_likes").order("total_likes DESC")
+      # base_query.select("streamers.*, SUM(posts.likes_count) AS total_likes").order("total_likes DESC")
+      Post.includes(:streamer).order(likes_count: :desc).limit(5)
     when "views" # 総視聴回数順
-      base_query.select("streamers.*, SUM(posts.views_count) AS total_views").order("total_views DESC")
+      # base_query.select("streamers.*, SUM(posts.views_count) AS total_views").order("total_views DESC")
+      Post.includes(:streamer).order(views_count: :desc).limit(5)
     else # 投稿数順（デフォルト）
-      base_query.select("streamers.*, COUNT(posts.id) AS posts_count").order("posts_count DESC")
-    end.limit(5)
+      Streamer.joins(:posts).group(:id)
+                                      .select("streamers.*, COUNT(posts.id) AS posts_count")
+                                      .order("posts_count DESC").limit(5)
+    end
   end
 
   def ensure_html_format
