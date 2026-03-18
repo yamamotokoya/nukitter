@@ -15,6 +15,15 @@ class PostsController < ApplicationController
         # 並び替えロジック（追加）
         @posts = @posts.sorted_by(params[:sort])
 
+        # 4. 【ここが改造ポイント】Pagyで20件ずつに分割！
+        # @pagy には「今のページ番号」などの情報、@posts には「今回の20件」が入ります
+        @pagy, @posts = pagy(posts_query)
+
+        # 5. 無限スクロール用：2ページ目以降の読み込み（Turbo Stream）に対応
+        respond_to do |format|
+        format.html # 最初の1ページ目
+        format.turbo_stream # 「もっと見る」で追加される分
+        end
     end
 
 

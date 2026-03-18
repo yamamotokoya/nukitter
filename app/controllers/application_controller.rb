@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   # allow_browser versions: :modern 
+  include Pagy::Backend 
   before_action :check_age_verification
   
   stale_when_importmap_changes
