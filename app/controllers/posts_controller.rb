@@ -13,7 +13,7 @@ class PostsController < ApplicationController
         end
 
         # 並び替えロジック（追加）
-        @posts = @posts.sorted_by(params[:sort])
+        posts_query = @posts.sorted_by(params[:sort])
 
         # 4. 【ここが改造ポイント】Pagyで20件ずつに分割！
         # @pagy には「今のページ番号」などの情報、@posts には「今回の20件」が入ります
