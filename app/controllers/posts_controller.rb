@@ -19,10 +19,9 @@ class PostsController < ApplicationController
         # @pagy には「今のページ番号」などの情報、@posts には「今回の20件」が入ります
         @pagy, @posts = pagy(posts_query)
 
-        # 5. 無限スクロール用：2ページ目以降の読み込み（Turbo Stream）に対応
-        respond_to do |format|
-        format.html # 最初の1ページ目
-        format.turbo_stream # 「もっと見る」で追加される分
+        if turbo_frame_request?
+            # 修正：render partial ではなく、フォーマットを turbo_stream として返す
+            render "index", formats: [:turbo_stream]
         end
     end
 

@@ -1,0 +1,17 @@
+<%# 1. すでにある #posts (Grid) の中に、純粋なカードだけを継ぎ足す %>
+<%= turbo_stream.append "posts" do %>
+  <%= render @posts %>
+<% end %>
+
+<%# 2. Gridの外にある「自分自身」を、次のページのトリガーに差し替える %>
+<%= turbo_stream.replace "pagination" do %>
+  <% if @pagy.next %>
+    <%= turbo_frame_tag "pagination", 
+                        src: pagy_url_for(@pagy, @pagy.next), 
+                        loading: "lazy" do %>
+      <div class="py-10 text-center text-slate-400 font-bold animate-pulse">
+        さらに読み込み中...
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

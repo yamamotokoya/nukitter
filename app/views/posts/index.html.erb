@@ -23,9 +23,10 @@
   <% end %>
 
   <%# 投稿一覧（全件表示） %>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
+  <div id="posts" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
     <% if @posts.any? %>
       <%= render @posts %>
+
     <% else %>
       <div class="col-span-2 py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
         <div class="text-4xl mb-4">🏜️</div>
@@ -33,4 +34,18 @@
       </div>
     <% end %>
   </div>
+  
+   <div id="pagination_container">
+      <% if @pagy.next %>
+          <%= turbo_frame_tag "pagination", 
+                              src: pagy_url_for(@pagy, @pagy.next), 
+                              loading: "lazy", 
+                              target: "_top" do %>
+        <div class="py-10 text-center text-slate-400 font-bold animate-pulse">
+                読み込み中...
+        </div>
+        <% end %>
+      <% end %>
+  </div>
+
 </div>

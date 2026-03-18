@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include Pagy::Frontend 
 
   # app/helpers/application_helper.rb
 
