@@ -47,6 +47,17 @@ end
     end
   end
 
+  def sidebar_rank_label(rank_param)
+    case rank_param
+    when "likes"
+      "❤️ お気に入りランキング"
+    when "views"
+      "👁️ 視聴数ランキング"
+    else
+      "🔥 人気配信者ランキング"
+    end
+  end
+
   private
 
   def field_options_for(column)
