@@ -28,14 +28,8 @@ Rails.application.configure do
   config.assume_ssl = true
 
   config.action_dispatch.trusted_proxies = [
-    IPAddr.new("127.0.0.0/8"),
-    IPAddr.new("172.16.0.0/12"), # Dockerの標準ネットワーク範囲
-    IPAddr.new("192.168.0.0/16")
+    /^(127\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)/
   ]
-
-  config.action_dispatch.default_headers.merge!(
-    'X-Forwarded-Proto' => 'https'
-  )
 
   config.ssl_options = { redirect: { exclude: ->(request) { request.path =~ /health/ } } }
 
