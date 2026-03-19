@@ -2,6 +2,7 @@ class StreamersController < ApplicationController
     before_action :ensure_admin!, except: :show
     before_action :set_streamer, only: [:show, :edit, :update, :destroy]
     before_action :set_columns, only: [:new, :edit]
+    before_action :set_sidebar_data, only: [:index, :show, :new, :edit]
 
     def index
         if params[:query].present?            

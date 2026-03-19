@@ -74,13 +74,17 @@ class ApplicationController < ActionController::Base
   end
 
   def check_age_verification
-    # 確認ページ自体と、承認アクション、アセット（CSS/JS）は除外する
-    return if controller_name == 'welcome' || action_name == 'approve_age' || request.path.start_with?('/assets')
+  # 1. 開発中のwelcomeコントローラーやアセットはスルー
+  return if controller_name == 'welcome' || action_name == 'approve_age' || request.path.start_with?('/assets')
 
-    # クッキーに承認済みの印がなければ、確認ページへ飛ばす
-    unless cookies.permanent[:age_verified] == "true"
-      redirect_to confirm_age_path
-    end
+  # 2. 【重要】POSTリクエスト（データ送信中）は門番をスルーさせる
+  # これを入れないと、配信者登録などの送信が途中で遮断されてエラーになります
+  return if request.post?
+
+  # 3. クッキーがなければ確認ページへ
+  unless cookies.permanent[:age_verified] == "true"
+    redirect_to confirm_age_path
   end
+end
 
 end
