@@ -51,7 +51,7 @@ class StreamersController < ApplicationController
     def create
         @streamer = Streamer.new(streamer_params)
         if @streamer.save 
-            redirect_to @streamer
+            redirect_to root_path
         else
             p @streamer.errors.full_messages 
             @columns = set_columns
