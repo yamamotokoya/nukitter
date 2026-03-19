@@ -27,6 +27,12 @@ Rails.application.configure do
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 
+  config.action_dispatch.trusted_proxies = [
+    IPAddr.new("127.0.0.0/8"),
+    IPAddr.new("172.16.0.0/12"), # Dockerの標準ネットワーク範囲
+    IPAddr.new("192.168.0.0/16")
+  ]
+
   config.action_dispatch.default_headers.merge!(
     'X-Forwarded-Proto' => 'https'
   )
