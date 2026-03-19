@@ -56,7 +56,7 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
+  config.active_job.queue_adapter = :inline
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Ignore bad email addresses and do not raise email delivery errors.
@@ -86,6 +86,8 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   config.active_storage.analyze_active_job = false
+
+  config.active_storage.queues.analysis = nil
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   # config.hosts = [
