@@ -87,7 +87,7 @@
             <h3 class="text-xl font-black text-gray-800">配信内容を入力</h3>
             <button data-action="click->toggle#toggle" class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition">✕</button>
           </div>
-          <%= render partial: "shared/form", locals: {model: [@streamer, @new_post], columns: [:content, :x_video_url, :genre_ids], btn_label: "投稿する"}%>
+          <%= render partial: "shared/form", locals: {model: [@streamer, @new_post], columns: [:content, :x_video_url, :genre_ids, :thumbnail], btn_label: "投稿する"}%>
         </div>
       </div>
       <%= link_to edit_streamer_path(@streamer), class: "h-11 px-6 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition font-bold shadow-sm flex items-center text-sm" do %>

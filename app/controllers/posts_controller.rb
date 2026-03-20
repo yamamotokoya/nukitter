@@ -72,11 +72,11 @@ class PostsController < ApplicationController
     private 
 
     def post_params
-        params.require(:post).permit(:content, :x_video_url, :streamer_id, genre_ids: [])
+        params.require(:post).permit(:content, :x_video_url, :streamer_id, :thumbnail, genre_ids: [])
     end
 
     def set_columns
-        [:content, :x_video_url, :genre_ids]
+        [:content, :x_video_url, :genre_ids, :thumbnail]
     end
 
     def set_post

@@ -41,7 +41,7 @@ end
         
         # ネストしたフォームの生成
         f.fields_for(:posts) do |post_f|
-          render_form_fields(post_f, [:content, :x_video_url, :genre_ids])
+          render_form_fields(post_f, [:content, :x_video_url, :genre_ids, :thumbnail])
         end
       ])
     end
@@ -70,6 +70,15 @@ end
     { 
       type: :file_field, 
       label: "配信者アイコン (画像)", 
+      html_options: { 
+        accept: 'image/*',
+        class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+      } 
+    }
+    when :thumbnail
+    { 
+      type: :file_field, 
+      label: "サムネイル画像 (一覧に表示されます)", 
       html_options: { 
         accept: 'image/*',
         class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"

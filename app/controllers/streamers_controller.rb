@@ -27,7 +27,7 @@ class StreamersController < ApplicationController
         # @posts = @streamer.posts.includes(:genres).where.not(id: nil).order(created_at: :desc)
         @posts = @streamer.posts.includes(:genres).sorted_by(params[:sort])
         @new_post = Post.new(streamer: @streamer)
-        @columns = [:content, :x_video_url, :genre_ids]
+        @columns = [:content, :x_video_url, :genre_ids, :thumbnail]
     end
 
     def new 
