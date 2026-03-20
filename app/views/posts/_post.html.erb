@@ -6,18 +6,25 @@
   <% end %>
 
   <%# 2. 動画エリア (z-20) %>
-  <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative z-20 flex items-center justify-center">
+    <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative z-20 flex items-center justify-center">
     <% if post.x_video_url.present? %>
-      <div class="w-full">
-        <%# 動画特化モード (560は公式の動画モードフラグ) %>
-        <blockquote class="twitter-video" data-media-max-width="560" data-lang="ja">
+      <div class="w-full h-full flex items-center justify-center">
+        <%# data-dnt="true" と data-chrome="noheader nofooter" 的な設定を意識 %>
+        <blockquote class="twitter-video" 
+                    data-media-max-width="560" 
+                    data-lang="ja" 
+                    data-dnt="true" <%# ← プライバシー保護によるボタン消失を防ぐ %>
+                    style="width: 100%; margin: 0 auto;">
           <a href="<%= post.x_video_url %>"></a>
+        <%# ここでJavaScriptを読み込み直すと、無限スクロール時も安定します %>
+        <script async src="https://platform.twitter.com" charset="utf-8"></script>
         </blockquote>
       </div>
     <% else %>
       <div class="text-gray-500 text-xs font-bold">動画がありません</div>
     <% end %>
   </div>
+
 
   <div class="p-5 flex-1 flex flex-col relative">
     <%# 3. 配信者情報 (z-30) %>
