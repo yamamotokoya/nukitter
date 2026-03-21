@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   resources :users
   resources :posts
   resources :streamers do
-  resources :posts, only: [:create, :destroy] # streamerに紐づく投稿の作成
+  resources :posts, only: [:create, :destroy, :edit, :update] # streamerに紐づく投稿の作成
 end
   resources :genres, only: [:show, :new, :create]
   resources :posts do

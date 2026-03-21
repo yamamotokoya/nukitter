@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
-    before_action :set_post, only: [:show, :destroy]
-    before_action :ensure_admin!, only: [:new, :create, :destroy]
+    before_action :set_post, only: [:show, :destroy, :edit, :update]
+    before_action :ensure_admin!, only: [:new, :create, :destroy, :edit, :update]
 
     def index
         @posts = Post.includes(:streamer, :genres).where.not(streamer_id: nil)
@@ -62,6 +62,20 @@ class PostsController < ApplicationController
 
 
         @other_posts = @post.streamer.posts.where.not(id: @post.id).limit(6)
+    end
+
+    def edit
+        # @post は set_post で取得済み
+        @columns = set_columns # フォーム表示用の設定
+    end
+
+    def update
+        if @post.update(post_params)
+        redirect_to @post, notice: "投稿を更新しました"
+        else
+        @columns = set_columns
+        render :edit, status: :unprocessable_entity
+        end
     end
 
     def destroy
