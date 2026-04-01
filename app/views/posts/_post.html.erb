@@ -1,13 +1,13 @@
 <div id="<%= dom_id post %>" class="group relative bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-full min-h-[400px] hover:border-indigo-300 transition-colors">
   
-  <%# --- 全体リンク（ヘルパー使用） --- %>
+  <%# --- 1. カード全体のメインリンク（z-10） --- %>
   <%= link_to post_card_link_path(post), post_card_link_options(post) do %>
-    <span class="sr-only"><%= post_card_button_label(post) %></span>
+    <span class="sr-only"><%= post_card_button_text(post) %></span>
   <% end %>
 
   <div class="p-5 flex-1 flex flex-col relative">
     
-    <%# 1. 配信者情報エリア (z-30) %>
+    <%# 2. 配信者情報エリア (z-30) %>
     <div class="flex items-center mb-4 relative z-30">
       <%= link_to streamer_path(post.streamer), class: "w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mr-3 hover:bg-indigo-500 transition shadow-sm overflow-hidden" do %>
         <% if post.streamer.icon.attached? %>
@@ -28,13 +28,13 @@
       </div>
     </div>
 
-    <%# 2. 本文エリア %>
+    <%# 3. 本文エリア %>
     <div class="text-gray-600 text-sm leading-relaxed mb-4 overflow-hidden relative z-0" 
          style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; min-height: 4.2em; max-height: 4.2em;">
       <%= post.content %>
     </div>
 
-    <%# 3. サムネイルエリア (画像として表示し、中央に誘導ボタンを配置) %>
+    <%# 4. サムネイルエリア (以前の再生ボタンデザインをアフィリエイトボタンに統合) %>
     <div class="aspect-video bg-slate-900 flex-shrink-0 w-full overflow-hidden rounded-lg relative z-0 flex items-center justify-center mb-4">
       <% if post.thumbnail.attached? %>
         <%= image_tag post.thumbnail, class: "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" %>
@@ -46,10 +46,10 @@
         </div>
       <% end %>
 
-      <%# 中央のボタンデザイン（ヘルパーでアイコンとテキストを切り替え） %>
+      <%# ボタンデザイン：以前の「再生ボタン」の形状を活かしたまま、テキストを可変に %>
       <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-all pointer-events-none">
-        <div class="relative px-4 py-2 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-lg transform group-hover:scale-110 transition-all duration-500">
-          <span class="text-white text-xs font-bold mr-2"><%= post_card_button_label(post) %></span>
+        <div class="relative px-4 py-2 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.1)] transform group-hover:scale-110 group-hover:bg-white/20 transition-all duration-500">
+          <span class="text-white text-[11px] font-bold mr-2"><%= post_card_button_text(post) %></span>
           <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
             <% if post_external_link?(post) %>
               <path d="M14 3h7v7h-2V6.41l-9.29 9.29-1.42-1.42L17.59 5H14V3zM5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/>
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <%# 4. フッターエリア (z-30) %>
+    <%# 5. フッターエリア (以前のデザイン：グレースケールの統計情報) %>
     <div class="mt-auto pt-4 border-t border-gray-100 relative z-30">
       <div class="flex flex-wrap gap-2 mb-4">
         <% post.genres.each do |genre| %>
@@ -72,20 +72,23 @@
       </div>
 
       <div class="flex items-center justify-between mt-2 w-full">
-        <div class="flex items-center text-[11px] text-gray-400 font-bold bg-gray-50 px-2 py-0.5 rounded-md">
-          <svg class="w-3 h-3 mr-1.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <%# 以前の「グレースケール背景の再生数」を復活 %>
+        <div class="flex items-center whitespace-nowrap text-[11px] text-gray-400 font-bold bg-gray-50 px-2 py-0.5 rounded-md shrink-0">
+          <svg class="w-3 h-3 mr-1.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-          <span>詳細をチェック</span>
+          <span class="leading-none"><%= number_to_human(post.views_count) %>回再生</span>
         </div>
+
         <div class="flex items-center space-x-3 relative z-50">
           <%= render "likes/like", post: post %>
+
           <% if current_user&.admin? %>
             <%= button_to post_path(post), 
                           method: :delete, 
                           data: { turbo_confirm: "本当に削除しますか？" }, 
-                          class: "flex items-center justify-center p-1.5 text-gray-300 hover:text-red-500 transition-colors bg-white/50 rounded-lg border border-gray-100 hover:border-red-100 hover:bg-red-50" do %>
+                          class: "flex items-center justify-center p-1.5 text-gray-300 hover:text-red-500 transition-colors bg-white/50 rounded-lg border border-transparent hover:border-red-100 hover:bg-red-50" do %>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>

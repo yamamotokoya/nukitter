@@ -13,7 +13,7 @@ module PostsHelper
     end
   end
 
-  def post_card_button_label(post)
+  def post_card_button_text(post)
     post.affiliate_url.present? ? "サンプルを見る" : "詳細を見る"
   end
 
