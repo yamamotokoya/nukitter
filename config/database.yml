@@ -88,7 +88,7 @@ production:
   primary: &primary_production
     <<: *default
     database: product_one_sample_production
-    username: product_one_sample
+    username: postgres
     password: <%= ENV["PRODUCT_ONE_SAMPLE_DATABASE_PASSWORD"] %>
     host: db  
     port: 5432 
