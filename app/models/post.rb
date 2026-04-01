@@ -1,5 +1,5 @@
 class Post < ApplicationRecord
-    before_save :format_x_video_url
+    before_save :handle_video_and_affiliate_urls
     belongs_to :streamer, optional: true
     has_many :post_genres, dependent: :destroy
     has_many :genres, through: :post_genres
@@ -24,9 +24,14 @@ class Post < ApplicationRecord
 
   private
 
-def format_x_video_url
-  return if x_video_url.blank?
+def handle_video_and_affiliate_urls
+  if affiliate_url.present?
+      self.x_video_url = nil 
+      return # 以下の整形処理をスキップ
+    end
 
+  # 2. Xの動画URL整形ロジック（従来通り）
+  return if x_video_url.blank?
   # 1. URLから「数字のID」だけを抽出
   tweet_id = x_video_url.match(%r{status/(\d+)})&.[](1)
 
