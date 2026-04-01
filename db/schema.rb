@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_021522) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_01_004449) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,6 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_021522) do
   end
 
   create_table "posts", force: :cascade do |t|
+    t.string "affiliate_url"
     t.text "content"
     t.datetime "created_at", null: false
     t.integer "likes_count", default: 0, null: false
