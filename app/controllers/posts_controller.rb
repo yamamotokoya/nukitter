@@ -38,7 +38,7 @@ class PostsController < ApplicationController
         if @post.save
             redirect_to @streamer, notice: "投稿しました"
         else
-            @columns = [:content, :x_video_url] 
+            @columns = [:content, :affiliate_url] 
             @posts = @streamer.posts.where.not(id: nil) # 一覧表示用
             
             render "streamers/show", status: :unprocessable_entity
@@ -86,11 +86,11 @@ class PostsController < ApplicationController
     private 
 
     def post_params
-        params.require(:post).permit(:content, :x_video_url, :streamer_id, :thumbnail, genre_ids: [])
+        params.require(:post).permit(:content, :affiliate_url, :streamer_id, :thumbnail, genre_ids: [])
     end
 
     def set_columns
-        [:content, :x_video_url, :genre_ids, :thumbnail]
+        [:content, :affiliate_url, :genre_ids, :thumbnail]
     end
 
     def set_post

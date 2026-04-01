@@ -41,7 +41,7 @@ end
         
         # ネストしたフォームの生成
         f.fields_for(:posts) do |post_f|
-          render_form_fields(post_f, [:content, :x_video_url, :genre_ids, :thumbnail])
+          render_form_fields(post_f, [:content, :affiliate_url, :genre_ids, :thumbnail])
         end
       ])
     end
@@ -102,7 +102,7 @@ end
         # column(streamer_id) 以外の引数を配列で用意
         args: [Streamer.all, :id, :name, { prompt: "選択してください" }, { class: base_class }]
       }
-    when :x_video_url
+    when :affiliate_url
       { 
       type: :url_field, 
       label: "𝕏 ポストのURL", 

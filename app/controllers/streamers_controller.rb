@@ -27,7 +27,7 @@ class StreamersController < ApplicationController
         # @posts = @streamer.posts.includes(:genres).where.not(id: nil).order(created_at: :desc)
         @posts = @streamer.posts.includes(:genres).sorted_by(params[:sort])
         @new_post = Post.new(streamer: @streamer)
-        @columns = [:content, :x_video_url, :genre_ids, :thumbnail]
+        @columns = [:content, :affiliate_url, :genre_ids, :thumbnail]
     end
 
     def new 
@@ -78,7 +78,7 @@ end
     private
 
     def streamer_params
-        params.require(:streamer).permit(:name, :x_url, :icon, posts_attributes: [:id, :content, :x_video_url, :_destroy,  genre_ids: []])
+        params.require(:streamer).permit(:name, :x_url, :icon, posts_attributes: [:id, :content, :affiliate_url, :_destroy,  genre_ids: []])
     end
 
     def set_streamer
