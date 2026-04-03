@@ -1,24 +1,7 @@
-<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-extrabold text-gray-900">女優一覧</h1>
-    <%= link_to '新規登録', new_streamer_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700" %>
-  </div>
-
-    <% if @search_word.present? %>
-      <div class="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-100 flex justify-between">
-        <p>「<strong><%= @search_word %></strong>」の検索結果: <%= @streamers.length %> 名</p>
-        <%= link_to "クリア", streamers_path, class: "text-indigo-600 underline" %>
-      </div>
-  <% end %>
-
-  <%# レスポンシブなグリッド: スマホ1列、タブレット2列、PC3列 %>
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    <% if @streamers.any? %>
-      <%= render @streamers %>
-    <% else %>
-      <div class="col-span-full py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-        <p class="text-gray-500 text-lg">登録されている女優がいません</p>
-      </div>
-    <% end %>
-  </div>
-</div>
+<% if current_user&.admin? %>
+  <%# 管理者用：現在のデザイン（新規登録ボタン・検索機能付き） %>
+  <%= render 'admin_index', streamers: @streamers %>
+<% else %>
+  <%# 一般ユーザー用：新しく作る「女優名鑑」デザイン %>
+  <%= render 'user_index', streamers: @streamers %>
+<% end %>

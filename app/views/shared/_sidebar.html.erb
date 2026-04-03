@@ -64,18 +64,32 @@
               <%# ここまで新ランキング切り替えセクション %>
 
               <%# 管理・ユーザーセクション %>
-              <div class="pt-6 border-t border-slate-800 pb-10">
+              <%# 管理・ユーザーセクション %>
+              <div class="pt-6 border-t border-slate-800 pb-10 px-1">
                 <% if logged_in? %>
+                  <%# --- 管理者専用メニュー --- %>
                   <% if current_user&.admin? %>
-                    <div class="mb-4 px-1 flex flex-col space-y-2">
-                      <span class="bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase w-fit">Admin</span>
-                      <%= link_to "女優登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400" %>
-                      <%= link_to "女優一覧", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400" %>
-                      <%= link_to "ジャンル登録", new_genre_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400" %>
+                    <div class="mb-4 flex flex-col space-y-2">
+                      <span class="bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase w-fit">Admin Menu</span>
+                      <%= link_to "✨ 女優登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                      <%= link_to "⚙️ 女優管理（一覧）", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                      <%= link_to "🏷️ ジャンル登録", new_genre_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                    </div>
+                  <% else %>
+                    <%# --- 一般ユーザー用メニュー --- %>
+                    <div class="mb-4 flex flex-col space-y-2">
+                      <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest">Menu</span>
+                      <%= link_to "💎 女優名鑑", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-300 hover:text-indigo-400 transition" %>
                     </div>
                   <% end %>
-                  <%= button_to "ログアウト", logout_path, method: :delete, data: { turbo: false }, class: "w-full text-center text-[10px] font-bold bg-slate-800 py-2 rounded-lg text-slate-400" %>
+                  <%= button_to "ログアウト", logout_path, method: :delete, data: { turbo: false }, class: "w-full text-center text-[10px] font-bold bg-slate-800 py-2 rounded-lg text-slate-400 mt-4" %>
+
                 <% else %>
+                  <%# --- 未ログインユーザー用メニュー --- %>
+                  <div class="mb-4 flex flex-col space-y-2">
+                    <span class="text-slate-500 text-[9px] font-black uppercase tracking-widest">Explore</span>
+                    <%= link_to "💎 女優名鑑", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-300 hover:text-indigo-400 transition" %>
+                  </div>
                   <%= link_to "ログイン", login_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-slate-800 py-2.5 rounded-lg text-white mb-2" %>
                   <%= link_to signup_path, data: { turbo: false }, class: "block text-[11px] font-bold text-center bg-indigo-600 py-2.5 rounded-lg hover:bg-indigo-500 text-white shadow-lg" do %>新規登録<% end %>
                 <% end %>

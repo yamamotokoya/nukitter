@@ -1,0 +1,42 @@
+<div class="max-w-6xl mx-auto py-12 px-4">
+  <%# ヘッダー %>
+  <div class="text-center mb-16">
+    <h1 class="text-3xl font-black text-gray-900 mb-2">女優名鑑</h1>
+    <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">
+      Total <span class="text-indigo-600 text-lg"><%= streamers.to_a.size %></span> Actresses
+    </p>
+  </div>
+
+  <%# --- 解決策：中央寄せ & 要素間の余白を固定 --- %>
+  <div class="flex flex-wrap justify-center gap-12">
+    <% streamers.each do |streamer| %>
+      <%# link_to のオプションを { } で囲んで修正しました %>
+      <%= link_to streamer_path(streamer), { data: { turbo_frame: "_top" }, class: "group flex flex-col items-center no-underline", style: "width: 160px; flex: 0 0 160px;" } do %>
+        
+        <%# アイコン：160pxの正円を強制固定 %>
+        <div class="rounded-full overflow-hidden border-4 border-white shadow-md bg-slate-100 flex items-center justify-center transition-all duration-300 group-hover:shadow-xl group-hover:ring-2 group-hover:ring-indigo-400" 
+             style="width: 160px; height: 160px; min-width: 160px; min-height: 160px;">
+          
+          <% if streamer.icon.attached? %>
+            <%= image_tag streamer.icon, style: "width: 100%; height: 100%; object-fit: cover;" %>
+          <% else %>
+            <%# デフォルトの人物シルエット %>
+            <div class="w-full h-full flex items-center justify-center bg-slate-200">
+              <svg style="width: 60%; height: 60%; color: #cbd5e1;" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              </svg>
+            </div>
+          <% end %>
+        </div>
+        
+        <%# 名前：mt-4 (16px) で配置。文字がはみ出さないよう調整 %>
+        <div class="mt-4 text-center w-full">
+          <p class="text-sm font-black text-gray-800 group-hover:text-indigo-600 transition-colors truncate">
+            <%= streamer.name %>
+          </p>
+          <p class="text-[9px] text-gray-400 font-bold mt-1 uppercase tracking-tighter">Profile</p>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
