@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   post "approve_age", to: "welcome#approve_age"
   resources :users
   resources :posts
-  resources :streamers do
+  resources :streamers, path: 'actresses' do
   resources :posts, only: [:create, :destroy, :edit, :update] # streamerに紐づく投稿の作成
 end
   resources :genres, only: [:show, :new, :create]
