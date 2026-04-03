@@ -7,7 +7,7 @@
       <% if current_user&.admin? %>
         <nav class="flex items-center space-x-4 ml-6 border-l border-slate-700 pl-6">
           <span class="bg-amber-500 text-slate-900 text-xs font-bold px-2 py-1 rounded uppercase">Admin</span>
-          <%= link_to "配信者登録", new_streamer_path, class: "text-sm hover:text-amber-400 transition" %>
+          <%= link_to "女優登録", new_streamer_path, class: "text-sm hover:text-amber-400 transition" %>
           <%= link_to "ユーザー管理", users_path, class: "text-sm hover:text-amber-400 transition" %>
         </nav>
       <% end %>

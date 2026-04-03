@@ -1,6 +1,6 @@
 <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"> 
   <div class="p-5">
-    <%# 配信者情報（ヘッダー） %>
+    <%# 女優情報（ヘッダー） %>
     <div class="flex items-center mb-4">
       <%= link_to streamer_path(post.streamer), class: "flex items-center group" do %>
         <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-lg mr-3 <%= streamer_avatar_class(post.streamer.name) %>">
@@ -99,8 +99,8 @@
               <div class="pt-4 border-t border-slate-800">
                 <span class="bg-amber-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Admin Menu</span>
                 <div class="flex flex-col space-y-2 mt-3 pl-2 border-l-2 border-amber-500/30 text-sm">
-                  <%= link_to "配信者登録", new_streamer_path, class: "hover:text-amber-400" %>
-                  <%= link_to "配信者一覧", streamers_path, class: "hover:text-amber-400" %>
+                  <%= link_to "女優登録", new_streamer_path, class: "hover:text-amber-400" %>
+                  <%= link_to "女優一覧", streamers_path, class: "hover:text-amber-400" %>
                   <div class="pt-2">
                     <p class="text-xs text-slate-500 font-bold mb-1 underline">ユーザー管理</p>
                     <%= link_to "・ ユーザー一覧", users_path, class: "block hover:text-amber-400" %>
@@ -187,9 +187,9 @@
   </div>
 
   <div class="p-5 flex-1 flex flex-col relative">
-    <%# 3. 配信者情報セクション（リンクを効かせるため z-30） %>
+    <%# 3. 女優情報セクション（リンクを効かせるため z-30） %>
     <div class="flex items-center mb-4 relative z-30">
-      <%# アイコン：配信者一覧へ %>
+      <%# アイコン：女優一覧へ %>
       <%= link_to streamer_path(post.streamer), class: "w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mr-3 hover:bg-indigo-500 transition shadow-sm" do %>
         <%= post.streamer.name&.[](0) %>
       <% end %>
@@ -422,7 +422,7 @@
         </div>
       </div>
 
-      <%# --- 4. 配信者ランキングセクション (旧おすすめセクション) --- %>
+      <%# --- 4. 女優ランキングセクション (旧おすすめセクション) --- %>
       <% if @sidebar_ranked_streamers&.any? %>
               <div class="pt-6 border-t border-slate-800">
                 <div class="flex items-center justify-between mb-4 px-1">
@@ -496,8 +496,8 @@
         <div class="pt-6 border-t border-slate-800">
           <span class="bg-amber-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">Admin Menu</span>
           <div class="flex flex-col space-y-2 mt-4 pl-3 border-l-2 border-amber-500/30">
-            <%= link_to "配信者登録", new_streamer_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
-            <%= link_to "配信者一覧", streamers_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
+            <%= link_to "女優登録", new_streamer_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
+            <%= link_to "女優一覧", streamers_path, class: "text-sm py-1 hover:text-amber-400 transition" %>
             <div class="pt-3">
               <p class="text-[10px] text-slate-500 font-bold mb-2 uppercase tracking-widest">System Management</p>
               <%= link_to "・ ユーザー一覧", users_path, class: "block text-sm py-1 pl-1 hover:text-amber-400 transition" %>
@@ -766,8 +766,8 @@
               <div class="mb-4 px-1">
                 <span class="bg-amber-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">Admin Control</span>
                 <div class="flex flex-col space-y-2 mt-3 pl-2 border-l border-amber-500/30">
-                  <%= link_to "配信者登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
-                  <%= link_to "配信者一覧", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                  <%= link_to "女優登録", new_streamer_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
+                  <%= link_to "女優一覧", streamers_path, data: { turbo_frame: "_top" }, class: "text-[11px] font-bold text-slate-400 hover:text-amber-400 transition" %>
                 </div>
               </div>
             <% end %>
@@ -856,7 +856,7 @@
   </div>
 
   <div class="p-5 flex-1 flex flex-col relative">
-    <%# 3. 配信者情報 (z-30) - 既存コード維持 %>
+    <%# 3. 女優情報 (z-30) - 既存コード維持 %>
     <div class="flex items-center mb-4 relative z-30">
       <%# ... (ストリーマーのアイコン表示部分はそのまま) ... %>
       <%= link_to streamer_path(post.streamer), class: "w-9 h-9 rounded-full bg-indigo-600 flex-shrink-0 flex items-center justify-center text-white text-xs font-bold mr-3 hover:bg-indigo-500 transition shadow-sm overflow-hidden" do %>

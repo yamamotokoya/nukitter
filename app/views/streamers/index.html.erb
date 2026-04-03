@@ -1,6 +1,6 @@
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
   <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-extrabold text-gray-900">配信者一覧</h1>
+    <h1 class="text-3xl font-extrabold text-gray-900">女優一覧</h1>
     <%= link_to '新規登録', new_streamer_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700" %>
   </div>
 
@@ -17,7 +17,7 @@
       <%= render @streamers %>
     <% else %>
       <div class="col-span-full py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-        <p class="text-gray-500 text-lg">登録されている配信者がいません</p>
+        <p class="text-gray-500 text-lg">登録されている女優がいません</p>
       </div>
     <% end %>
   </div>
