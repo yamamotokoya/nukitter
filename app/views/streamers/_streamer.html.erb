@@ -14,7 +14,7 @@
     </div>
     
     <div class="mt-4">
-      <p class="text-xs text-gray-400">最新の投稿</p>
+      <p class="text-xs text-gray-400">最新の作品</p>
       <div class="mt-1 text-sm text-gray-600 line-clamp-2">
       <% if streamer.posts&.any? %>
     <%# URLをリンク化し、さらにTailwindのクラスを付与する %>
@@ -32,7 +32,7 @@
       <%= time_ago_in_words(streamer.posts.last.created_at) %>前
     </div>
   <% else %>
-    <span class="italic text-gray-300 text-xs">投稿なし</span>
+    <span class="italic text-gray-300 text-xs">作品なし</span>
   <% end %>
       </div>
     </div>
@@ -51,9 +51,9 @@
     </div>
 
 
-  <% # 右寄せ：投稿数 %>
+  <% # 右寄せ：作品数 %>
   <div class="text-xs text-gray-500 italic">
-    投稿数: <%= streamer.posts.count %>
+    作品数: <%= streamer.posts.count %>
   </div>
 </div>
 

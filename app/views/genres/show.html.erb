@@ -9,7 +9,7 @@
         <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">
           <%= @genre.name %>
         </h1>
-        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の投稿一覧</p>
+        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の作品一覧</p>
       </div>
     </div>
 
@@ -30,13 +30,13 @@
     <%= render 'posts/sort_menu' %>
   </div>
 
-  <%# --- 3. 投稿一覧 (既存) --- %>
+  <%# --- 3. 作品一覧 (既存) --- %>
   <div class="grid gap-6 md:grid-cols-2">
     <% if @posts.any? %>
       <%= render @posts %>
     <% else %>
       <div class="col-span-2 py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-        <p class="text-gray-500">このジャンルの投稿はまだありません。</p>
+        <p class="text-gray-500">このジャンルの作品はまだありません。</p>
       </div>
     <% end %>
   </div>

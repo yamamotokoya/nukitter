@@ -26,7 +26,7 @@
       <% end %>
     </div>
 
-    <%# 投稿本文 %>
+    <%# 作品本文 %>
     <div class="flex flex-col h-full">
       <div class="text-gray-600 text-sm mb-4 break-words overflow-hidden flex-1 min-h-[4.5rem]"
           style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3;">
@@ -48,7 +48,7 @@
     </div>
 
 
-    <%# 動画がある場合 %>
+    <%# 作品がある場合 %>
     <% if post.video.attached? %>
       <div class="rounded-xl overflow-hidden bg-black aspect-video">
         <%= video_tag url_for(post.video), controls: true, class: "w-full h-full" %>
@@ -124,12 +124,12 @@
         </div>
       </div>
 
-  <%# --- 2. 最近見た動画 (ヘッダーの「外」に配置する) --- %>
+  <%# --- 2. 最近見た作品 (ヘッダーの「外」に配置する) --- %>
   <% if @history_posts&.any? %>
     <%= turbo_frame_tag "view_history_frame" do %>
     <div id="view_history_section" class="mb-12 transition-all duration-500 ease-in-out">
       <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center px-1">
-        <span class="mr-2 text-lg">🕒</span> 最近見た動画10件
+        <span class="mr-2 text-lg">🕒</span> 最近見た作品10件
       </h2>
       <%# --- 履歴削除ボタン --- %>
       <%= button_to history_path, method: :delete, 
@@ -179,7 +179,7 @@
     <span class="sr-only">詳細を見る</span>
   <% end %>
 
-  <%# 2. 動画エリア（再生ボタンを触れるように z-30） %>
+  <%# 2. 作品エリア（再生ボタンを触れるように z-30） %>
   <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative">
     <% if post.video.attached? %>
       <%= video_tag url_for(post.video), controls: true, preload: "metadata", class: "w-full h-full object-contain" %>
@@ -249,11 +249,11 @@
         <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">
           <%= @genre.name %>
         </h1>
-        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の投稿一覧</p>
+        <p class="text-sm text-gray-500 font-medium mt-0.5">ジャンル別の作品一覧</p>
       </div>
     </div>
 
-    <%# 投稿数バッジ %>
+    <%# 作品数バッジ %>
     <div class="text-right">
       <span class="block text-2xl font-black text-indigo-600 leading-none">
         <%= @posts_count %>
@@ -262,14 +262,14 @@
     </div>
   </div>
 
-  <%# 投稿一覧（既存のグリッド） %>
+  <%# 作品一覧（既存のグリッド） %>
   <div class="grid gap-6 md:grid-cols-2">
     <% if @posts.any? %>
       <%= render @posts %>
     <% else %>
-      <%# 投稿がない時の表示（以前のコード） %>
+      <%# 作品がない時の表示（以前のコード） %>
       <div class="col-span-2 py-20 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-        <p class="text-gray-500">このジャンルの投稿はまだありません。</p>
+        <p class="text-gray-500">このジャンルの作品はまだありません。</p>
       </div>
     <% end %>
   </div>
@@ -351,7 +351,7 @@
     <nav class="flex flex-col space-y-6">
       <%= link_to "タイムライン", root_path, class: "text-base py-2 hover:text-indigo-400 border-b border-slate-800 transition font-bold" %>
 
-      <%# --- 2. 最近いいねした動画 (Likeセクション) --- %>
+      <%# --- 2. 最近いいねした作品 (Likeセクション) --- %>
       <%# --- 2. お気に入り、または履歴セクション --- %>
 <% if logged_in? %>
   <% if @sidebar_likes&.any? %>
@@ -384,7 +384,7 @@
     <%# --- お気に入りがなく、履歴がある場合 --- %>
       <div class="pt-2">
         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
-          <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た動画
+          <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た作品
         </p>
         <div class="space-y-3">
           <% @sidebar_histories.each do |post| %>
@@ -430,7 +430,7 @@
                     <span class="text-amber-400 mr-1.5">⭐</span> Ranking
                   </p>
                   <div class="flex items-center space-x-1 shrink-0">
-                    <%= link_to "投稿", url_for(rank: "posts"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'posts' || params[:rank].blank? ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
+                    <%= link_to "作品", url_for(rank: "posts"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'posts' || params[:rank].blank? ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
                     <%= link_to "人気", url_for(rank: "likes"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'likes' ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
                     <%= link_to "再生", url_for(rank: "views"), class: "px-1.5 py-0.5 rounded text-[8px] font-black transition-all #{params[:rank] == 'views' ? 'bg-amber-500 text-slate-900' : 'text-slate-600'}" %>
                   </div>
@@ -560,15 +560,15 @@
     <%= render 'sort_menu' %>
   <% end %>
 
-  <%# 投稿一覧のグリッド表示 %>
+  <%# 作品一覧のグリッド表示 %>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
     <% if @posts.any? %>
       <%= render @posts %>
     <% else %>
-      <%# 投稿がない、または検索にヒットしない時の表示 %>
+      <%# 作品がない、または検索にヒットしない時の表示 %>
       <div class="col-span-2 py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
         <div class="text-4xl mb-4">🏜️</div>
-        <p class="text-gray-500 font-bold text-lg">一致する投稿が見つかりませんでした</p>
+        <p class="text-gray-500 font-bold text-lg">一致する作品が見つかりませんでした</p>
         <p class="text-gray-400 text-sm mt-1">別のキーワードを試してみてください。</p>
       </div>
     <% end %>
@@ -683,7 +683,7 @@
           <% elsif @sidebar_histories&.any? %>
             <div class="pt-2">
               <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1 flex items-center">
-                <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た動画
+                <span class="text-indigo-400 mr-1.5">🕒</span> 最近見た作品
               </p>
               <div class="space-y-2">
                 <% @sidebar_histories.each do |post| %>
@@ -835,7 +835,7 @@
     <span class="sr-only">詳細を見る</span>
   <% end %>
 
-  <%# 2. 動画エリア (z-30) - Xの動画埋め込みに差し替え %>
+  <%# 2. 作品エリア (z-30) - Xの作品埋め込みに差し替え %>
   <div class="aspect-video bg-black flex-shrink-0 w-full overflow-hidden relative z-30 flex items-center justify-center">
     <% if post.x_video_url.present? %>
       <%# 一覧画面では「再生ボタン風」のプレースホルダーを表示（クリックで詳細へ） %>
@@ -843,15 +843,15 @@
         <svg class="w-12 h-12 mb-2 opacity-80" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8 5v14l11-7z"/>
         </svg>
-        <span class="text-xs font-bold bg-black/40 px-2 py-1 rounded">Xで動画を見る</span>
+        <span class="text-xs font-bold bg-black/40 px-2 py-1 rounded">Xで作品を見る</span>
       </div>
       
-      <%# もし一覧で直接動画を表示したい場合は、上のdivを消して以下を有効化 %>
+      <%# もし一覧で直接作品を表示したい場合は、上のdivを消して以下を有効化 %>
       <%# <blockquote class="twitter-tweet" data-conversation="none" data-cards="hidden"> %>
       <%#   <a href="<%= post.x_video_url %>"></a> %>
       <%# </blockquote> %>
     <% else %>
-      <div class="text-gray-500 text-xs">動画がありません</div>
+      <div class="text-gray-500 text-xs">作品がありません</div>
     <% end %>
   </div>
 
@@ -926,7 +926,7 @@
   </div>
 
   <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-    <%# 1. 動画を大きく表示 %>
+    <%# 1. 作品を大きく表示 %>
     <div class="aspect-video bg-black">
       <% if @post.video.attached? %>
         <%= video_tag url_for(@post.video), controls: true, class: "w-full h-full" %>
@@ -934,7 +934,7 @@
     </div>
 
     <div class="p-8 md:p-12">
-      <%# 2. 投稿本文（制限なし・改行維持） %>
+      <%# 2. 作品本文（制限なし・改行維持） %>
       <div class="text-gray-800 text-lg leading-relaxed break-words whitespace-pre-wrap mb-10 font-medium">
         <%= auto_link(@post.content, html: { class: 'text-indigo-600 hover:underline' }) %>
       </div>
@@ -959,7 +959,7 @@
 <div class="max-w-4xl mx-auto px-4 mt-16 pb-20">
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-xl font-bold text-gray-900 flex items-center">
-      <span class="mr-2">📺</span> <%= @post.streamer.name %> の他の動画
+      <span class="mr-2">📺</span> <%= @post.streamer.name %> の他の作品
     </h2>
     <%= link_to "すべて見る", streamer_path(@post.streamer), class: "text-sm font-bold text-indigo-600 hover:underline" %>
   </div>
@@ -970,7 +970,7 @@
       <% @other_posts.each do |other_post| %>
         <div class="min-w-[280px] md:min-w-[320px] snap-start bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
           <%= link_to post_path(other_post), class: "block group" do %>
-            <%# サムネイル（動画の1コマ目） %>
+            <%# サムネイル（作品の1コマ目） %>
             <div class="aspect-video bg-black relative">
               <% if other_post.video.attached? %>
                 <%= video_tag url_for(other_post.video), class: "w-full h-full object-cover opacity-80 group-hover:opacity-100 transition" %>
@@ -996,7 +996,7 @@
       <% end %>
     </div>
   <% else %>
-    <p class="text-gray-400 text-sm italic">他の投稿はまだありません。</p>
+    <p class="text-gray-400 text-sm italic">他の作品はまだありません。</p>
   <% end %>
 </div>
 
@@ -1039,13 +1039,13 @@
     <% end %>
   </div>
 
-  <%# --- 2. 最近見た動画 (10件) --- %>
+  <%# --- 2. 最近見た作品 (10件) --- %>
   <% if @history_posts.present? && @history_posts.any?  %>
     <div id="view_history_section" class="mb-16">
         <div class="flex items-center justify-between mb-6 px-1">
   <%# 左側：タイトル %>
   <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center">
-    <span class="mr-2 text-lg">🕒</span> 最近見た動画 10件
+    <span class="mr-2 text-lg">🕒</span> 最近見た作品 10件
   </h2>
   
   <%# 右側：削除リンク（aタグなのでレイアウトが壊れません） %>
@@ -1083,10 +1083,10 @@
     </div>
   <% end %>
 
-  <%# --- 3. お気に入り動画セクション --- %>
+  <%# --- 3. お気に入り作品セクション --- %>
   <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
     <h2 class="text-xl font-extrabold text-gray-900 flex items-center">
-      <span class="mr-3">📂</span> お気に入り動画
+      <span class="mr-3">📂</span> お気に入り作品
     </h2>
   </div>
 
@@ -1096,8 +1096,8 @@
     <% else %>
       <div class="col-span-full py-32 text-center bg-white rounded-3xl border-2 border-dashed border-gray-200">
         <div class="text-5xl mb-6 opacity-30">🎬</div>
-        <p class="text-gray-500 font-bold text-lg mb-6">まだ「いいね」した動画がありません</p>
-        <%= link_to "タイムラインで動画を探す", root_path, class: "inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200" %>
+        <p class="text-gray-500 font-bold text-lg mb-6">まだ「いいね」した作品がありません</p>
+        <%= link_to "タイムラインで作品を探す", root_path, class: "inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200" %>
       </div>
     <% end %>
   </div>

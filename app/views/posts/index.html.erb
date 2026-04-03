@@ -22,7 +22,7 @@
     </div>
   <% end %>
 
-  <%# 投稿一覧（全件表示） %>
+  <%# 作品一覧（全件表示） %>
   <div id="posts" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start w-full py-8">
     <% if @posts.any? %>
       <%= render @posts %>
@@ -30,7 +30,7 @@
     <% else %>
       <div class="col-span-2 py-24 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
         <div class="text-4xl mb-4">🏜️</div>
-        <p class="text-gray-500 font-bold text-lg">一致する投稿が見つかりませんでした</p>
+        <p class="text-gray-500 font-bold text-lg">一致する作品が見つかりませんでした</p>
       </div>
     <% end %>
   </div>

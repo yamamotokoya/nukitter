@@ -28,12 +28,12 @@
     <% end %>
   </div>
 
-    <%# --- 2. 最近見た動画 (10件) --- %>
+    <%# --- 2. 最近見た作品 (10件) --- %>
     <% if @history_posts.present? && @history_posts.any? %>
     <div id="view_history_section" class="mb-16">
         <div class="flex items-center justify-between mb-6 px-1">
         <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center">
-            <span class="mr-2 text-lg">🕒</span> 最近見た動画 10件
+            <span class="mr-2 text-lg">🕒</span> 最近見た作品 10件
         </h2>
         
         <%= link_to history_path, 
@@ -53,7 +53,7 @@
         <% @history_posts.each do |post| %>
             <div class="w-60 flex-none snap-start group">
             <%= link_to post_path(post), class: "block w-full" do %>
-                <%# 修正：video_tag を廃止し、X動画用のプレースホルダーを表示 %>
+                <%# 修正：video_tag を廃止し、X作品用のプレースホルダーを表示 %>
                 <div class="aspect-video bg-slate-900 rounded-xl overflow-hidden mb-3 border border-gray-100 shadow-sm group-hover:shadow-md transition relative flex items-center justify-center">
                 <% if post.x_video_url.present? %>
                     <div class="text-white/40 flex flex-col items-center">
@@ -78,10 +78,10 @@
     </div>
     <% end %>
 
-  <%# --- 3. お気に入り動画セクション --- %>
+  <%# --- 3. お気に入り作品セクション --- %>
   <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
     <h2 class="text-xl font-extrabold text-gray-900 flex items-center">
-      <span class="mr-3">📂</span> お気に入り動画
+      <span class="mr-3">📂</span> お気に入り作品
     </h2>
   </div>
 
@@ -91,8 +91,8 @@
     <% else %>
       <div class="col-span-full py-32 text-center bg-white rounded-3xl border-2 border-dashed border-gray-200">
         <div class="text-5xl mb-6 opacity-30">🎬</div>
-        <p class="text-gray-500 font-bold text-lg mb-6">まだ「いいね」した動画がありません</p>
-        <%= link_to "タイムラインで動画を探す", root_path, class: "inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200" %>
+        <p class="text-gray-500 font-bold text-lg mb-6">まだ「いいね」した作品がありません</p>
+        <%= link_to "タイムラインで作品を探す", root_path, class: "inline-flex items-center px-8 py-3 bg-indigo-600 text-white font-bold rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200" %>
       </div>
     <% end %>
   </div>

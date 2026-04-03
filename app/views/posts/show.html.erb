@@ -17,7 +17,7 @@
         <%= auto_link(@post.content, html: { class: 'text-indigo-600 hover:underline' }) %>
       </div>
 
-      <%# 2. メイン表示エリア（動画 or サンプルの切り替え） %>
+      <%# 2. メイン表示エリア（作品 or サンプルの切り替え） %>
       <div class="aspect-video bg-slate-900 flex items-center justify-center rounded-xl overflow-hidden shadow-inner mb-10 relative group">
         
         <% if @post.affiliate_url.present? %>
@@ -30,7 +30,7 @@
             <%# 中央の誘導オーバーレイ %>
             <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
               <div class="bg-indigo-600 text-white px-8 py-4 rounded-full font-black shadow-2xl transform group-hover:scale-110 transition-transform flex items-center gap-3">
-                <span>公式サイトで動画サンプルを見る</span>
+                <span>公式サイトで作品サンプルを見る</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -40,7 +40,7 @@
           <% end %>
 
         <% elsif @post.x_video_url.present? %>
-          <%# --- 従来通り：Xの動画プレイヤーを表示 --- %>
+          <%# --- 従来通り：Xの作品プレイヤーを表示 --- %>
           <div id="x-embed-container" class="w-full max-w-[550px] mx-auto overflow-hidden">
             <blockquote class="twitter-video" data-media-max-width="560" data-lang="ja">
               <a href="<%= @post.x_video_url %>"></a>
@@ -87,7 +87,7 @@
   </div>
 </div>
 
-<%# 下部の「他の動画」セクション %>
+<%# 下部の「他の作品」セクション %>
 <div class="max-w-4xl mx-auto px-4 mt-16 pb-20">
   <div class="flex items-center justify-between mb-6 border-b-2 border-gray-100 pb-2">
     <h2 class="text-xl font-black text-gray-900 flex items-center">

@@ -69,7 +69,7 @@ end
     when :icon
     { 
       type: :file_field, 
-      label: "配信者アイコン (画像)", 
+      label: "女優アイコン (画像)", 
       html_options: { 
         accept: 'image/*',
         class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
@@ -97,7 +97,7 @@ end
     when :streamer_id
       {
         type: :collection_select,
-        label: "配信者を選択",
+        label: "女優を選択",
         # collection_select(method, collection, value_method, text_method, options = {}, html_options = {})
         # column(streamer_id) 以外の引数を配列で用意
         args: [Streamer.all, :id, :name, { prompt: "選択してください" }, { class: base_class }]
@@ -123,7 +123,7 @@ end
     when :x_url
       { type: :text_field, label: "𝕏 ID (@なし)", html_options: { class: base_class } }
     when :content
-      { type: :text_area, label: "配信内容の紹介", html_options: { class: base_class } }
+      { type: :text_area, label: "作品内容の紹介", html_options: { class: base_class } }
     else
       # デフォルト設定（未定義の場合）
       { type: :text_field, label: "未定義の項目", html_options: { class: base_class, placeholder: "編集不可" } }

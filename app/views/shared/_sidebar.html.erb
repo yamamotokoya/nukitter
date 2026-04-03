@@ -19,7 +19,7 @@
                   <div class="space-y-2">
                     <% @sidebar_ranked_items.each do |item| %>
                       <% if item.is_a?(Post) %>
-                        <%# --- 1. 投稿(Post)ランキング：いいね・再生数 --- %>
+                        <%# --- 1. 作品(Post)ランキング：いいね・再生数 --- %>
                         <%= link_to post_path(item), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
                           <div class="w-8 h-8 rounded bg-slate-800 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-700">
                             <% if item.streamer.icon.attached? %>
@@ -31,7 +31,7 @@
                           <div class="ml-3 overflow-hidden text-left flex flex-col justify-center">
                             <%# contentを表示、なければ女優名 %>
                             <p class="text-[11px] font-bold text-slate-300 truncate group-hover:text-white">
-                              <%= item.content.presence&.truncate(15) || "#{item.streamer.name}の投稿" %>
+                              <%= item.content.presence&.truncate(15) || "#{item.streamer.name}の作品" %>
                             </p>
                             <p class="text-[9px] text-slate-500 font-medium mt-0.5 whitespace-nowrap uppercase tracking-tighter">
                               <%= item.streamer.name %> • 
@@ -40,7 +40,7 @@
                           </div>
                         <% end %>
                       <% else %>
-                        <%# --- 2. 女優(Streamer)ランキング：投稿数 --- %>
+                        <%# --- 2. 女優(Streamer)ランキング：作品数 --- %>
                         <%= link_to streamer_path(item), data: { turbo_frame: "_top" }, class: "group flex items-center p-2 rounded-lg hover:bg-slate-800 transition-all" do %>
                           <div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-600">
                             <% if item.icon.attached? %>
