@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_01_004449) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_03_061537) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -82,6 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_01_004449) do
   create_table "streamers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
+    t.string "name_kana"
     t.datetime "updated_at", null: false
     t.string "x_url"
   end

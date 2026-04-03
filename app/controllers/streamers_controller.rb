@@ -5,21 +5,23 @@ class StreamersController < ApplicationController
     before_action :set_sidebar_data, only: [:index, :show, :new, :edit]
 
     def index
-        if params[:query].present?            
+        if params[:query].present?
+            # --- 1. 検索時 (共通) ---
             @search_word = params[:query]
-    
-            streamer_ids = Streamer.joins(:posts)
+            @streamers = Streamer.joins(:posts)
                                 .where("posts.content LIKE ? OR streamers.name LIKE ?", "%#{@search_word}%", "%#{@search_word}%")
-                                .pluck(:id).uniq
-
-            @streamers = Streamer.where(id: streamer_ids)
-                                .includes(:posts) # ビューで投稿を表示するために必要
-                                .order(created_at: :desc)
-        else
+                                .distinct
+                                .includes(:posts)
+        elsif current_user&.admin?
+            # --- 2. 管理者の場合：最新投稿順 (これまでのロジックを維持) ---
             @streamers = Streamer.left_joins(:posts)
-                          .group(:id)
-                          .includes(:posts)
-                          .order("MAX(posts.created_at) DESC NULLS LAST")
+                                .group(:id)
+                                .includes(:posts)
+                                .order("MAX(posts.created_at) DESC NULLS LAST")
+        else
+            # --- 3. 一般ユーザーの場合：あいうえお順 (name_kana順) ---
+            # .includes(:posts) を入れて N+1問題（重くなる原因）を防止
+            @streamers = Streamer.all.includes(:posts).order(:name_kana)
         end
     end
 
@@ -78,7 +80,7 @@ end
     private
 
     def streamer_params
-        params.require(:streamer).permit(:name, :x_url, :icon, posts_attributes: [:id, :content, :affiliate_url, :_destroy,  genre_ids: []])
+        params.require(:streamer).permit(:name, :x_url, :icon, :name_kana, posts_attributes: [:id, :content, :affiliate_url, :_destroy,  genre_ids: []])
     end
 
     def set_streamer
@@ -86,6 +88,6 @@ end
     end
 
     def set_columns
-        @columns = [:name, :x_url, :icon]
+        @columns = [:name, :x_url, :icon, :name_kana]
     end
 end

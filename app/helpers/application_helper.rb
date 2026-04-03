@@ -122,6 +122,8 @@ end
       { type: :text_field, label: "名前", html_options: { class: base_class } }
     when :x_url
       { type: :text_field, label: "𝕏 ID (@なし)", html_options: { class: base_class } }
+    when :name_kana
+      { type: :text_field, label: "ふりがな", html_options: { class: base_class, placeholder: "ひらがなで入力して下さい" } }
     when :content
       { type: :text_area, label: "作品内容の紹介", html_options: { class: base_class } }
     else
