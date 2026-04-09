@@ -2,6 +2,24 @@
   <%# ヘッダー %>
   <div class="text-center mb-16">
     <h1 class="text-3xl font-black text-gray-900 mb-2">女優名鑑</h1>
+    <%# --- 五十音ナビゲーション --- %>
+    <div class="max-w-4xl mx-auto mb-16 px-4">
+        <div class="flex flex-wrap justify-center gap-2 md:gap-3">
+            <% Streamer::KANA_MAP.keys.each do |letter| %>
+            <%= link_to streamers_path(letter: letter), 
+                data: { turbo_frame: "_top" },
+                class: "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full border-2 font-black transition-all shadow-sm
+                        #{params[:letter] == letter ? 'bg-indigo-600 border-indigo-600 text-white scale-110 shadow-lg shadow-indigo-200' : 'bg-white border-gray-100 text-gray-400 hover:border-indigo-400 hover:text-indigo-600'}" do %>
+                <%= letter %>
+            <% end %>
+            <% end %>
+            
+            <%# フィルタ解除ボタン %>
+            <% if params[:letter].present? %>
+            <%= link_to "全て", streamers_path, data: { turbo_frame: "_top" }, class: "ml-2 px-5 h-10 md:h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 text-xs font-bold hover:bg-gray-200 transition" %>
+            <% end %>
+        </div>
+    </div>
     <p class="text-gray-400 font-bold text-xs uppercase tracking-widest">
       Total <span class="text-indigo-600 text-lg"><%= streamers.to_a.size %></span> Actresses
     </p>

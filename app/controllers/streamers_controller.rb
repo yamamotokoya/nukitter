@@ -5,23 +5,28 @@ class StreamersController < ApplicationController
     before_action :set_sidebar_data, only: [:index, :show, :new, :edit]
 
     def index
+        # ここで必ず全データを代入（初期化）します。これが抜けると nil エラーになります。
+        base_scope = Streamer.all.includes(:posts)
+
         if params[:query].present?
             # --- 1. 検索時 (共通) ---
             @search_word = params[:query]
-            @streamers = Streamer.joins(:posts)
+            @streamers = base_scope.joins(:posts)
                                 .where("posts.content LIKE ? OR streamers.name LIKE ?", "%#{@search_word}%", "%#{@search_word}%")
                                 .distinct
-                                .includes(:posts)
+        elsif params[:letter].present?
+            # --- 2. 五十音フィルタ実行時 ---
+            @streamers = base_scope.by_kana_row(params[:letter]).order(:name_kana)
         elsif current_user&.admin?
-            # --- 2. 管理者の場合：最新投稿順 (これまでのロジックを維持) ---
+            # --- 3. 管理者の場合：最新投稿順 (これまでのロジックを維持) ---
             @streamers = Streamer.left_joins(:posts)
                                 .group(:id)
                                 .includes(:posts)
                                 .order("MAX(posts.created_at) DESC NULLS LAST")
         else
-            # --- 3. 一般ユーザーの場合：あいうえお順 (name_kana順) ---
+            # --- 4. 一般ユーザーの場合：あいうえお順 (name_kana順) ---
             # .includes(:posts) を入れて N+1問題（重くなる原因）を防止
-            @streamers = Streamer.all.includes(:posts).order(:name_kana)
+            @streamers = base_scope.order("name_kana ASC NULLS LAST")
         end
     end
 
