@@ -85,7 +85,7 @@ end
     private
 
     def streamer_params
-        params.require(:streamer).permit(:name, :x_url, :icon, :name_kana, posts_attributes: [:id, :content, :affiliate_url, :_destroy,  genre_ids: []])
+        params.require(:streamer).permit(:name, :x_url, :icon, :name_kana, posts_attributes: [:id, :content, :affiliate_url, :_destroy, :thumbnail,  genre_ids: []])
     end
 
     def set_streamer

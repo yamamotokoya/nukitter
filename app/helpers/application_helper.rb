@@ -19,6 +19,9 @@ def render_form_fields(f, columns)
               }
             end
           end
+        elsif options[:type] == :file_field # ← ここを追加・修正！
+          # file_field は args ではなく html_options を直接受け取るようにする
+          f.file_field(column, options[:html_options])
         elsif options[:args]
           f.send(options[:type], column, *options[:args])
         else
